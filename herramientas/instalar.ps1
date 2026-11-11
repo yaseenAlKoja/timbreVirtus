@@ -385,12 +385,15 @@ if ($TokenTunel) {
             Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-$arqCf.exe" `
                 -OutFile $cfExe -UseBasicParsing
         }
+        # cloudflared escribe sus mensajes normales por la salida de errores; con Start-Process
+        # PowerShell no los confunde con un fallo (con "2>&1" y ErrorAction Stop abortaba el paso).
         if (Get-Service -Name cloudflared -ErrorAction SilentlyContinue) {
-            & $cfExe service uninstall 2>&1 | Out-Null
+            Start-Process -FilePath $cfExe -ArgumentList "service", "uninstall" -Wait -WindowStyle Hidden
             Start-Sleep -Seconds 3
         }
-        & $cfExe service install $TokenTunel 2>&1 | Out-Null
-        Start-Sleep -Seconds 6
+        $inst = Start-Process -FilePath $cfExe -ArgumentList "service", "install", $TokenTunel -Wait -PassThru -WindowStyle Hidden
+        if ($inst.ExitCode -ne 0) { Aviso "cloudflared termino con codigo $($inst.ExitCode)" }
+        Start-Sleep -Seconds 8
         $svcCf = Get-Service -Name cloudflared -ErrorAction SilentlyContinue
         if ($svcCf -and $svcCf.Status -eq "Running") {
             Set-Service -Name cloudflared -StartupType Automatic

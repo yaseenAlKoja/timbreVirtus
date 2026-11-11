@@ -15,7 +15,7 @@ Get-CimInstance Win32_Process -Filter "Name='pythonw.exe' OR Name='python.exe'" 
     ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
 $cfExe = "C:\TimbreEscolar\cloudflared\cloudflared.exe"
 if ((Get-Service -Name cloudflared -ErrorAction SilentlyContinue) -and (Test-Path $cfExe)) {
-    & $cfExe service uninstall 2>&1 | Out-Null
+    Start-Process -FilePath $cfExe -ArgumentList "service", "uninstall" -Wait -WindowStyle Hidden
     Write-Host "  [OK] Tunel de Cloudflare desinstalado de este PC" -ForegroundColor Green
 }
 Get-NetFirewallRule -DisplayName "Timbre Escolar*" -ErrorAction SilentlyContinue | Remove-NetFirewallRule
