@@ -379,40 +379,7 @@ Ok "Panel accesible desde la red local del colegio (puerto $Puerto)"
 # ---------------------------------------------------------------- acceso remoto (Cloudflare Tunnel)
 if ($TokenTunel) {
     Titulo "Acceso remoto: Cloudflare Tunnel"
-    try {
-        $cfDir = "$Instal\cloudflared"
-        New-Item -ItemType Directory -Force -Path $cfDir | Out-Null
-        $cfExe = "$cfDir\cloudflared.exe"
-        $arqCf = if ($env:PROCESSOR_ARCHITECTURE -eq "x86") { "386" } else { "amd64" }
-        if (Test-Path $cfExe) {
-            $v = Start-Process -FilePath $cfExe -ArgumentList "--version" -Wait -PassThru -WindowStyle Hidden
-            if ($v.ExitCode -ne 0) { Remove-Item $cfExe -Force }   # archivo dañado: se vuelve a descargar
-        }
-        if (-not (Test-Path $cfExe)) {
-            Write-Host "  Descargando cloudflared (programa oficial de Cloudflare)..."
-            Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-$arqCf.exe" `
-                -OutFile $cfExe -UseBasicParsing
-        }
-        # cloudflared escribe sus mensajes normales por la salida de errores; con Start-Process
-        # PowerShell no los confunde con un fallo (con "2>&1" y ErrorAction Stop abortaba el paso).
-        if (Get-Service -Name cloudflared -ErrorAction SilentlyContinue) {
-            Start-Process -FilePath $cfExe -ArgumentList "service", "uninstall" -Wait -WindowStyle Hidden
-            Start-Sleep -Seconds 3
-        }
-        $inst = Start-Process -FilePath $cfExe -ArgumentList "service", "install", $TokenTunel -Wait -PassThru -WindowStyle Hidden
-        if ($inst.ExitCode -ne 0) { Aviso "cloudflared termino con codigo $($inst.ExitCode)" }
-        Start-Sleep -Seconds 8
-        $svcCf = Get-Service -Name cloudflared -ErrorAction SilentlyContinue
-        if ($svcCf -and $svcCf.Status -eq "Running") {
-            Set-Service -Name cloudflared -StartupType Automatic
-            Ok "Tunel activo como servicio de Windows (arranca solo, incluso antes de iniciar sesion)"
-            Ok "En Cloudflare, el hostname timbre.virtuscollege.com debe apuntar a http://localhost:$Puerto"
-        } else {
-            Aviso "El servicio del tunel no ha arrancado. Revisa el token en Cloudflare Zero Trust > Networks > Tunnels."
-        }
-    } catch {
-        Aviso "No se pudo configurar el tunel: $($_.Exception.Message)"
-    }
+    & (Join-Path $PSScriptRoot "conectar_cloudflare.ps1") -Token $TokenTunel -Desatendido
 }
 
 # ---------------------------------------------------------------- acceso directo
