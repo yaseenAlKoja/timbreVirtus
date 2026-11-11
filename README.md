@@ -122,6 +122,10 @@ No uses ese PC para otras tareas: cualquier vídeo o aviso de otro programa tamb
   **Al subirlos se convierten automáticamente a WAV**, se les quita el silencio del principio para que suenen justo a la hora
   y se igualan de volumen con los demás. Los MP3 que ya estuvieran subidos tienen un botón **Convertir a WAV**,
   que también actualiza los toques que los usaban.
+- **Megafonía:** pulsa en **Nubi** (o en el botón «Megafonía» de Inicio), graba el aviso con el micrófono,
+  escúchalo y pulsa **Enviar a los altavoces**: suena el tono de aviso y después tu mensaje (1, 2 o 3 veces).
+  El micrófono solo funciona entrando por **https://timbre.virtuscollege.com** o desde el propio PC (`localhost`);
+  en el registro queda quién envió cada aviso. Se guardan los 30 últimos en `datos\megafonia\`.
 - **Registro:** historial de toques y avisos; copia de seguridad (exportar e importar).
 - **Nubi**, la mascota: flota en una esquina y se puede arrastrar a cualquier sitio (recuerda dónde la dejas). Púlsala para ver el próximo toque; cuando suena el timbre se pone a saltar. Se oculta desde su bocadillo y se recupera con «Mostrar a Nubi» en el pie de página.
 

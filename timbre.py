@@ -36,7 +36,7 @@ from datetime import date, datetime, timedelta
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 BASE = Path(__file__).resolve().parent
 DATOS = BASE / "datos"
@@ -282,12 +282,15 @@ class Reproductor:
         return f"Linux (WAV: {'/'.join(wav)}; MP3: {'/'.join(mp3) or 'no disponible'})"
 
     def tocar(self, path, repeticiones=1, etiqueta=""):
+        self.tocar_lista([path] * max(1, repeticiones), etiqueta or path.name)
+
+    def tocar_lista(self, rutas, etiqueta=""):
+        """Reproduce varios sonidos seguidos (p. ej. tono de aviso + mensaje de megafonía)."""
         self.parar()
         evento = threading.Event()
         with self._lock:
             self._parar = evento
-            self._hilo = threading.Thread(target=self._ejecutar, args=(path, repeticiones, evento, etiqueta),
-                                          daemon=True)
+            self._hilo = threading.Thread(target=self._ejecutar, args=(list(rutas), evento, etiqueta), daemon=True)
             self._hilo.start()
 
     def parar(self):
@@ -297,14 +300,15 @@ class Reproductor:
         if hilo and hilo.is_alive() and hilo is not threading.current_thread():
             hilo.join(timeout=3)
 
-    def _ejecutar(self, path, repeticiones, evento, etiqueta):
-        self.sonando = etiqueta or path.name
+    def _ejecutar(self, rutas, evento, etiqueta):
+        self.sonando = etiqueta or rutas[0].name
+        path = rutas[0]
         try:
-            for i in range(repeticiones):
+            for i, path in enumerate(rutas):
                 if evento.is_set():
                     break
                 self._una_vez(path, evento)
-                if i < repeticiones - 1:
+                if i < len(rutas) - 1:
                     evento.wait(0.5)
         except Exception as e:  # noqa: BLE001
             self.al_error(f"Error al reproducir {path.name}: {e}")
@@ -625,6 +629,34 @@ class Timbre:
         self.reproductor.parar()
         self._anotar("manual", "⏹ Reproducción detenida")
 
+    def megafonia(self, datos_wav, tono=True, repeticiones=1, quien=""):
+        """Reproduce por los altavoces un aviso grabado desde el panel (WAV)."""
+        if len(datos_wav) < 1000 or datos_wav[:4] != b"RIFF" or datos_wav[8:12] != b"WAVE":
+            raise ErrorValidacion("El aviso grabado no es un audio WAV válido")
+        carpeta = DATOS / "megafonia"
+        carpeta.mkdir(parents=True, exist_ok=True)
+        ruta = carpeta / f"aviso-{datetime.now():%Y%m%d-%H%M%S}.wav"
+        ruta.write_bytes(datos_wav)
+        duracion = duracion_wav(ruta)
+        if duracion is None:
+            ruta.unlink(missing_ok=True)
+            raise ErrorValidacion("No se pudo leer el aviso grabado")
+        if duracion > 120:
+            ruta.unlink(missing_ok=True)
+            raise ErrorValidacion("El aviso dura más de 2 minutos")
+        for viejo in sorted(carpeta.glob("aviso-*.wav"))[:-30]:  # se guardan los 30 últimos
+            viejo.unlink(missing_ok=True)
+        lista = []
+        tono_ruta = SONIDOS / "tres_tonos.wav"
+        if tono and tono_ruta.is_file():
+            lista.append(tono_ruta)
+        lista += [ruta] * max(1, min(3, repeticiones))
+        self._anotar("megafonia", f"📢 Aviso por megafonía ({duracion:.0f} s"
+                                  + (f", ×{repeticiones}" if repeticiones > 1 else "") + ")"
+                                  + (f" — {quien}" if quien else ""))
+        self.reproductor.tocar_lista(lista, "Aviso por megafonía")
+        return duracion
+
     # ----- planificador
     def bucle_planificador(self):
         """Comprueba el reloj del sistema dos veces por segundo.
@@ -925,6 +957,17 @@ def crear_manejador(app, clave):
                         ok = app.sonar(str(d.get("sonido", "")), rep, str(d.get("etiqueta", ""))[:80] or "Toque manual",
                                        "manual")
                         return self._json({"ok": ok}, 200 if ok else 404)
+                    if ruta == "/api/megafonia":
+                        q = parse_qs(urlparse(self.path).query)
+                        tono = q.get("tono", ["1"])[0] != "0"
+                        try:
+                            rep = int(q.get("rep", ["1"])[0])
+                        except ValueError:
+                            rep = 1
+                        # Cloudflare Access indica quién ha iniciado sesión
+                        quien = self.headers.get("Cf-Access-Authenticated-User-Email", "")[:120]
+                        dur = app.megafonia(self._cuerpo(15 * 1024 * 1024), tono, rep, quien)
+                        return self._json({"ok": True, "duracion": dur})
                     if ruta == "/api/actualizar":
                         r = app.comprobar_actualizacion(forzar=True)
                         if r["error"]:
