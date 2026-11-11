@@ -39,7 +39,7 @@ RESPALDO = BASE / "respaldo"
 REPO = "yaseenAlKoja/timbreVirtus"
 # Lo que se actualiza. Todo lo demás (datos, python, cloudflared, sonidos subidos, logo) se conserva.
 ACTUALIZABLE = ["timbre.py", "actualizar.py", "web/index.html", "README.md", "INSTALAR.bat", "DESINSTALAR.bat",
-                "CONECTAR_CLOUDFLARE.bat", "COMPROBAR_ESTADO.bat", "herramientas", "sonidos/campana.wav",
+                "CONECTAR_CLOUDFLARE.bat", "COMPROBAR_ESTADO.bat", "SILENCIAR_WINDOWS.bat", "herramientas", "sonidos/campana.wav",
                 "sonidos/timbre_electrico.wav", "sonidos/tres_tonos.wav"]
 ES_WINDOWS = platform.system() == "Windows"
 

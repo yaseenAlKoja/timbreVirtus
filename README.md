@@ -104,6 +104,13 @@ Así, cuando vuelve la luz: el PC se enciende → Windows entra solo → el timb
 - Si se oye un zumbido, intercala un **aislador de masa** («ground loop isolator», unos 10 €).
 - Con la sesión del usuario del timbre abierta, comprueba en Windows (icono del altavoz) que el **dispositivo de salida predeterminado** es el que va al amplificador, y deja el volumen fijo (p. ej. 80 %). El nivel se regula en el amplificador.
 
+## Que por la megafonía solo suene el timbre
+
+Todo el sonido del PC sale por la megafonía. El instalador silencia Windows para el usuario del timbre
+(sonido de inicio, sonidos del sistema, notificaciones de Outlook/Teams/Edge…). Si vuelve a sonar algo,
+haz doble clic en **`SILENCIAR_WINDOWS.bat`** con la sesión del usuario del timbre abierta.
+No uses ese PC para otras tareas: cualquier vídeo o aviso de otro programa también sonaría en todo el colegio.
+
 ## Uso del panel
 
 Ábrelo con el acceso directo del escritorio o, desde otro equipo, con `http://NOMBRE-DEL-PC:8080`.

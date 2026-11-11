@@ -353,6 +353,11 @@ if ($zona.Id -notin @("Romance Standard Time", "GMT Standard Time")) {
     Aviso "Comprueba que la zona horaria es la correcta (Configuracion > Hora e idioma)"
 }
 
+# ---------------------------------------------------------------- sonidos de Windows
+Titulo "Silenciar Windows (por la megafonia solo suena el timbre)"
+try { & (Join-Path $PSScriptRoot "silenciar_windows.ps1") -Usuario $UsuarioTimbre -Desatendido }
+catch { Aviso "No se pudieron silenciar los sonidos de Windows: $($_.Exception.Message)" }
+
 # ---------------------------------------------------------------- energía y actualizaciones
 Titulo "Energia y Windows Update"
 & powercfg.exe /change standby-timeout-ac 0
