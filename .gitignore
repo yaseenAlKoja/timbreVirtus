@@ -1,0 +1,13 @@
+# Datos de cada instalación (horarios, registros) y binarios descargados por el instalador
+datos/
+python/
+cloudflared/
+web/marca/*
+!web/marca/.gitkeep
+__pycache__/
+*.pyc
+# Sonidos subidos en cada colegio (los incluidos sí se versionan)
+sonidos/*
+!sonidos/campana.wav
+!sonidos/timbre_electrico.wav
+!sonidos/tres_tonos.wav

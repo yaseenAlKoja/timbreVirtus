@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timbre · Virtus College</title>
+<link rel="icon" type="image/png" href="/marca/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Identidad Virtus College (Manual de Identidad Corporativa 2026) */
+:root{
+  --vc-navy:#1F1C3D;--vc-navy-deep:#071A25;--vc-gold:#BE9957;--vc-gold-on-navy:#DCB156;
+  --vc-grey-med:#DCE0E4;--vc-grey-light:#FAFAFA;--vc-ink:#2b2b33;--vc-muted:#6b7180;
+  --vc-font:'Euclid Circular A','Poppins','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --vc-radius:6px;
+  --bg:var(--vc-grey-light);--panel:#fff;--text:var(--vc-ink);--muted:var(--vc-muted);--line:var(--vc-grey-med);
+  --accent:var(--vc-navy);--gold-tint:#F6F0E4;--gold-dark:#7A5C24;
+  --ok:var(--vc-navy);--danger:#B42318;--danger-soft:#FCEBEA;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 var(--vc-font);-webkit-font-smoothing:antialiased}
+.ico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;box-shadow:0 4px 18px rgba(31,28,61,.06)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+.top{display:flex;align-items:center;gap:20px;padding:14px 0 10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:18px;min-height:48px}
+.brand img{height:48px;width:auto;display:block}
+.brand .wordmark{display:none;line-height:1.05;color:var(--vc-navy)}
+.brand .wordmark b{display:block;font-size:19px;font-weight:800;letter-spacing:1.5px}
+.brand .wordmark small{font-size:11px;letter-spacing:1px;color:var(--vc-muted)}
+.brand.sin-logo img{display:none}.brand.sin-logo .wordmark{display:block}
+.brand .app{border-left:2px solid var(--vc-gold);padding-left:16px;line-height:1.2}
+.brand .app b{display:block;color:var(--vc-navy);font-size:17px;font-weight:700}
+.brand .app span{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--vc-gold);font-weight:700}
+.clock{font-variant-numeric:tabular-nums;font-size:26px;font-weight:700;margin-left:auto;color:var(--vc-navy);text-align:right;line-height:1.15}
+.clock small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.clock .pill{margin-top:4px}
+nav{display:flex;gap:6px;overflow-x:auto}
+nav button{border:0;background:none;padding:10px 14px;color:var(--vc-navy);opacity:.7;font:500 15px var(--vc-font);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;border-radius:0}
+nav button:hover{opacity:1;border-color:var(--vc-grey-med)}
+nav button.on{opacity:1;border-color:var(--vc-gold);font-weight:700}
+main{padding:28px 0 40px}
+html{scroll-padding-top:180px}
+.grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--vc-radius);padding:24px}
+.card h2,.kicker{margin:0 0 14px;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--vc-gold)}
+.muted{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:700;letter-spacing:.3px}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.ok{background:#EDEFF3;color:var(--vc-navy)}
+.pill.ok::before{background:var(--vc-gold)}
+.pill.off{background:var(--danger-soft);color:var(--danger)}
+.pill.warn{background:var(--gold-tint);color:var(--gold-dark)}
+.pill.info{background:#EDEFF3;color:var(--vc-navy)}
+.pill.info::before{display:none}
+button,.btn{font:500 14px var(--vc-font);border:1.5px solid var(--line);background:#fff;color:var(--vc-navy);padding:8px 16px;border-radius:var(--vc-radius);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;line-height:1.4}
+button:hover,.btn:hover{border-color:var(--vc-navy)}
+button.primary,.btn.primary{background:var(--vc-navy);border-color:var(--vc-navy);color:#fff;font-weight:700}
+button.gold,.btn.gold{background:var(--vc-gold);border-color:var(--vc-gold);color:var(--vc-navy);font-weight:700}
+button.primary:hover,button.gold:hover,.btn.gold:hover{opacity:.92}
+button.danger{color:var(--danger)}
+button.danger:hover{border-color:var(--danger)}
+button.ring{font-size:17px;padding:14px 26px;background:var(--vc-gold);border-color:var(--vc-gold);color:var(--vc-navy);font-weight:700;letter-spacing:.3px}
+button.ring .ico{width:22px;height:22px}
+button.icon{padding:7px 9px}
+button:disabled{opacity:.45;cursor:default}
+input,select{font:15px var(--vc-font);color:var(--vc-navy);background:#fff;border:1.5px solid var(--line);border-radius:var(--vc-radius);padding:7px 10px}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--vc-gold);outline-offset:1px}
+input[type=time]{width:128px}
+input[type=number]{width:66px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--vc-navy);font-weight:700;padding:10px 6px;border-bottom:2px solid var(--vc-gold)}
+td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.off td{opacity:.45}
+.days{display:flex;gap:4px}
+.days label{position:relative}
+.days input{position:absolute;opacity:0;pointer-events:none}
+.days span{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:var(--vc-radius);border:1.5px solid var(--line);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);user-select:none}
+.days input:checked+span{background:var(--vc-navy);border-color:var(--vc-navy);color:#fff}
+.days input:focus-visible+span{outline:2px solid var(--vc-gold);outline-offset:1px}
+/* Titular con cajas doradas (recurso distintivo de la marca) */
+.hero{background:#fff;border:1px solid var(--line);border-radius:var(--vc-radius);padding:32px;display:flex;gap:32px;align-items:flex-end;flex-wrap:wrap;margin-bottom:20px;border-top:4px solid var(--vc-gold)}
+.hero-main{flex:1 1 380px}
+.vc-hl{margin:4px 0 14px;font-weight:800;font-size:clamp(26px,4vw,42px);line-height:1.55;color:var(--vc-navy)}
+.vc-hl span{display:inline;background:var(--vc-gold);color:var(--vc-navy);padding:.06em .28em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.vc-hl span.alt{color:#fff}
+.vc-hl span:empty{display:none}
+.hero-count{text-align:right}
+.big{font-size:clamp(34px,5vw,54px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05;color:var(--vc-navy)}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:flex;gap:14px;padding:9px 0 9px 12px;border-bottom:1px solid var(--line);align-items:center;border-left:3px solid transparent}
+.timeline li:last-child{border-bottom:0}
+.timeline .t{font-variant-numeric:tabular-nums;font-weight:700;width:52px;color:var(--vc-navy)}
+.timeline li.past{color:var(--muted)}
+.timeline li.past .t{color:var(--muted);text-decoration:line-through}
+.timeline li.next{border-left-color:var(--vc-gold);background:var(--gold-tint);font-weight:700;color:var(--vc-navy)}
+.log{font-size:13px;max-height:440px;overflow:auto}
+.log div{padding:6px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
+.log time{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.log .error{color:var(--danger)}
+.log .aviso{color:var(--gold-dark)}
+.savebar{background:var(--gold-tint);border-top:2px solid var(--vc-gold);padding:8px 0;display:none;color:var(--vc-navy)}
+.savebar.show{display:block}
+.toast{position:fixed;right:16px;bottom:16px;background:var(--vc-navy);color:#fff;padding:12px 18px;border-radius:var(--vc-radius);border-left:4px solid var(--vc-gold-on-navy);opacity:0;transition:opacity .2s;z-index:20;max-width:420px;font-weight:500;pointer-events:none}
+.toast.show{opacity:1}
+.toast.err{background:var(--danger);border-left-color:#fff}
+.hidden{display:none!important}
+.table-scroll{overflow-x:auto}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;color:var(--vc-navy)}
+.switch input{width:42px;height:24px;appearance:none;background:var(--vc-grey-med);border-radius:99px;position:relative;cursor:pointer;border:0;padding:0;transition:background .15s}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked{background:var(--vc-gold)}
+.switch input:checked::after{left:21px}
+footer{background:var(--vc-navy);color:#fff;margin-top:20px}
+footer .wrap{display:flex;gap:16px;align-items:center;padding:20px 24px;flex-wrap:wrap;font-size:13px}
+footer b{color:var(--vc-gold-on-navy);letter-spacing:1.5px;font-weight:700}
+footer span{opacity:.75}
+/* Mascota «Nubi»: nube flotante que se puede arrastrar */
+.nubi{position:fixed;z-index:30;width:110px;height:132px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.nubi.arrastrando{cursor:grabbing}
+.nubi .cuerpo{width:100%;height:100%;animation:flotar 3.2s ease-in-out infinite;transform-origin:50% 90%}
+.nubi.arrastrando .cuerpo{animation:none;transform:scale(1.06) rotate(-4deg)}
+.nubi.sonando .cuerpo{animation:saltar .45s ease-in-out infinite}
+.nubi svg{width:100%;height:100%;overflow:visible;display:block;filter:drop-shadow(0 6px 10px rgba(31,28,61,.25))}
+.nubi .sombra{position:absolute;left:50%;bottom:-6px;width:56px;height:10px;margin-left:-28px;border-radius:50%;background:rgba(31,28,61,.18);animation:sombra 3.2s ease-in-out infinite}
+.nubi.arrastrando .sombra{opacity:.5;transform:scale(.7)}
+.nubi .cursor{animation:parpadeo 1.1s steps(1) infinite}
+.nubi .cara-feliz{display:none}
+.nubi.sonando .cara-normal{display:none}
+.nubi.sonando .cara-feliz{display:inline}
+.nubi .brazo-dcho{transform-origin:86px 104px;animation:saludo 3.2s ease-in-out infinite}
+.nubi.sonando .brazo-dcho{animation:campanear .2s ease-in-out infinite}
+.nubi-bocadillo{position:absolute;bottom:calc(100% + 10px);right:0;width:max-content;max-width:230px;background:var(--vc-navy);color:#fff;padding:10px 14px;border-radius:var(--vc-radius);font-size:13px;line-height:1.45;border-bottom:3px solid var(--vc-gold-on-navy);box-shadow:0 8px 24px rgba(31,28,61,.25);opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;pointer-events:none}
+.nubi-bocadillo b{color:var(--vc-gold-on-navy)}
+.nubi-bocadillo.ver{opacity:1;transform:none;pointer-events:auto}
+.nubi.izq .nubi-bocadillo{right:auto;left:0}
+.nubi-bocadillo button{margin-top:8px;padding:2px 10px;font-size:12px;background:transparent;color:#fff;border-color:rgba(255,255,255,.35)}
+.nubi-bocadillo button:hover{border-color:#fff}
+.nubi-bocadillo::after{content:"";position:absolute;top:100%;right:38px;border:8px solid transparent;border-top-color:var(--vc-gold-on-navy)}
+.nubi.izq .nubi-bocadillo::after{right:auto;left:38px}
+#mostrarNubi{background:none;border:0;color:var(--vc-gold-on-navy);padding:0;font-size:13px;text-decoration:underline;cursor:pointer}
+@keyframes flotar{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-12px) rotate(1.5deg)}}
+@keyframes sombra{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.75);opacity:.6}}
+@keyframes saltar{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-16px) rotate(6deg)}}
+@keyframes parpadeo{0%,50%{opacity:1}51%,100%{opacity:0}}
+@keyframes saludo{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-18deg)}90%{transform:rotate(6deg)}}
+@keyframes campanear{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(15deg)}}
+@media (prefers-reduced-motion:reduce){.nubi .cuerpo,.nubi .sombra,.nubi .brazo-dcho{animation:none!important}}
+@media (max-width:700px){.nubi{width:80px;height:96px}}
+@media (max-width:700px){
+  .wrap{padding:0 16px}.brand img{height:38px}.brand .app{padding-left:12px}.brand .app b{font-size:15px}
+  .clock{margin-left:0;width:100%;text-align:left;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .hero{padding:22px}.hero-count{text-align:left}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5"/></symbol>
+  <symbol id="i-speaker" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="i-headphones" viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></symbol>
+</svg>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand" id="brand">
+        <img src="/marca/logo-positivo.svg" alt="Virtus College — The British Sixth Form"
+             onerror="document.getElementById('brand').classList.add('sin-logo')">
+        <div class="wordmark"><b>VIRTUS COLLEGE</b><small>The British Sixth Form</small></div>
+        <div class="app"><span>Sistema de</span><b>Timbre escolar</b></div>
+      </div>
+      <div class="clock"><span id="reloj">--:--:--</span><small id="fecha"></small><span id="estadoPill" class="pill ok">Activo</span></div>
+    </div>
+    <nav id="tabs">
+      <button data-tab="inicio" class="on">Inicio</button>
+      <button data-tab="horarios">Horarios</button>
+      <button data-tab="festivos">Días sin timbre</button>
+      <button data-tab="sonidos">Sonidos</button>
+      <button data-tab="registro">Registro</button>
+    </nav>
+  </div>
+  <div class="savebar" id="savebar">
+    <div class="wrap row">
+      <strong>Hay cambios sin guardar</strong>
+      <span class="spacer"></span>
+      <button id="btnDescartar">Descartar</button>
+      <button class="primary" id="btnGuardar"><svg class="ico"><use href="#i-save"/></svg>Guardar cambios</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- INICIO -->
+  <section data-panel="inicio">
+    <div class="hero">
+      <div class="hero-main">
+        <div class="kicker">Próximo toque</div>
+        <h1 class="vc-hl"><span id="proxNombre">—</span><br><span class="alt" id="proxHora"></span></h1>
+        <div id="proxSig" class="muted" style="font-size:14px"></div>
+      </div>
+      <div class="hero-count">
+        <div class="kicker" style="margin-bottom:4px">Faltan</div>
+        <div id="proxCuenta" class="big">—</div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h2>Tocar ahora</h2>
+        <div class="row" style="margin-bottom:12px">
+          <select id="manualSonido" aria-label="Sonido"></select>
+          <label class="row" style="gap:4px">× <input id="manualRep" type="number" min="1" max="10" value="1" aria-label="Repeticiones"></label>
+        </div>
+        <div class="row">
+          <button class="ring" id="btnTocar"><svg class="ico"><use href="#i-bell"/></svg>Tocar timbre</button>
+          <button id="btnParar"><svg class="ico"><use href="#i-stop"/></svg>Parar</button>
+        </div>
+        <div id="sonando" class="muted" style="margin-top:10px;font-size:13px"></div>
+      </div>
+      <div class="card">
+        <h2>Estado</h2>
+        <label class="switch" style="margin-bottom:12px"><input type="checkbox" id="swActivo"> <span id="swTxt">Timbre automático activado</span></label>
+        <div class="muted" style="font-size:13px">Horario activo:</div>
+        <select id="selActivoInicio" style="width:100%;margin:4px 0 12px"></select>
+        <div id="estadoHora" style="font-size:13px;margin-bottom:10px"></div>
+        <div class="muted" style="font-size:13px" id="infoSistema"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="row"><h2 style="margin:0">Toques de hoy</h2><span class="spacer"></span><span id="hoyInfo"></span></div>
+      <ul class="timeline" id="hoyLista" style="margin-top:8px"></ul>
+    </div>
+  </section>
+
+  <!-- HORARIOS -->
+  <section data-panel="horarios" class="hidden">
+    <div class="card">
+      <div class="row" style="margin-bottom:14px">
+        <label for="selHorario" class="muted">Horario:</label>
+        <select id="selHorario"></select>
+        <span id="esActivo"></span>
+        <span class="spacer"></span>
+        <button id="btnActivarH" class="gold"><svg class="ico"><use href="#i-check"/></svg>Usar este horario</button>
+        <button id="btnNuevoH"><svg class="ico"><use href="#i-plus"/></svg>Nuevo</button>
+        <button id="btnDuplicarH"><svg class="ico"><use href="#i-copy"/></svg>Duplicar</button>
+        <button id="btnRenombrarH"><svg class="ico"><use href="#i-edit"/></svg>Renombrar</button>
+        <button id="btnBorrarH" class="danger"><svg class="ico"><use href="#i-trash"/></svg>Eliminar</button>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Hora</th><th>Nombre</th><th>Días</th><th>Sonido</th><th title="Repeticiones">Rep.</th><th>Activo</th><th></th></tr></thead>
+          <tbody id="tablaToques"></tbody>
+        </table>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button id="btnAddToque" class="primary"><svg class="ico"><use href="#i-plus"/></svg>Añadir toque</button>
+        <span class="spacer"></span>
+        <span class="muted" style="font-size:13px">Los toques se ordenan por hora al guardar.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FESTIVOS -->
+  <section data-panel="festivos" class="hidden">
+    <div class="card">
+      <h2>Días sin timbre</h2>
+      <p class="muted" style="margin-top:0">Festivos, vacaciones o días sin clase. Durante estas fechas no sonará ningún toque programado (el botón manual sigue funcionando).</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Desde</th><th>Hasta</th><th>Motivo</th><th></th></tr></thead>
+          <tbody id="tablaFestivos"></tbody>
+        </table>
+      </div>
+      <div class="row" style="margin-top:14px"><button id="btnAddFestivo" class="primary"><svg class="ico"><use href="#i-plus"/></svg>Añadir día o periodo</button></div>
+    </div>
+  </section>
+
+  <!-- SONIDOS -->
+  <section data-panel="sonidos" class="hidden">
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <h2 style="margin:0">Sonidos</h2><span class="spacer"></span>
+        <label class="btn gold"><svg class="ico"><use href="#i-upload"/></svg>Subir sonido
+          <input type="file" id="fileSonido" accept=".wav,.mp3,.ogg,.flac,.m4a,audio/*" multiple class="hidden">
+        </label>
+      </div>
+      <p class="muted" style="margin-top:0;font-size:13px">Puedes subir varios archivos a la vez (MP3, WAV, OGG, M4A…). Se convierten automáticamente a <b>WAV</b>, se quita el silencio inicial para que suenen justo a la hora y se igualan de volumen. «Escuchar aquí» suena en este navegador; «Probar en altavoces» suena en la megafonía.</p>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Archivo</th><th>Duración</th><th>Tamaño</th><th></th></tr></thead>
+        <tbody id="tablaSonidos"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- REGISTRO -->
+  <section data-panel="registro" class="hidden">
+    <div class="grid">
+      <div class="card">
+        <h2>Actividad reciente</h2>
+        <div class="log" id="registro"></div>
+      </div>
+      <div class="card">
+        <h2>Copia de seguridad</h2>
+        <p class="muted" style="margin-top:0">Descarga toda la configuración (horarios y días sin timbre) o restaura una copia anterior.</p>
+        <div class="row">
+          <a class="btn" href="/api/exportar" download><svg class="ico"><use href="#i-download"/></svg>Exportar configuración</a>
+          <label class="btn"><svg class="ico"><use href="#i-upload"/></svg>Importar
+            <input type="file" id="fileImport" accept=".json,application/json" class="hidden">
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><b>VIRTUS COLLEGE</b><span>The British Sixth Form · Sistema de timbre escolar</span><span class="spacer"></span><button id="mostrarNubi" class="hidden">Mostrar a Nubi</button><span id="pieEquipo"></span></div></footer>
+<div class="nubi" id="nubi" role="button" tabindex="0" aria-label="Nubi, la mascota del timbre. Pulsa para ver el próximo toque; arrástrala para moverla.">
+  <div class="nubi-bocadillo" id="nubiBocadillo"></div>
+  <div class="sombra"></div>
+  <div class="cuerpo">
+    <svg viewBox="0 0 120 140" aria-hidden="true">
+      <defs>
+        <radialGradient id="nubiGrad" cx="38%" cy="28%" r="75%">
+          <stop offset="0" stop-color="#4B4588"/><stop offset=".55" stop-color="#2C2856"/><stop offset="1" stop-color="#1F1C3D"/>
+        </radialGradient>
+        <linearGradient id="nubiPantalla" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#141230"/><stop offset="1" stop-color="#0B0A1E"/>
+        </linearGradient>
+      </defs>
+      <!-- piernas -->
+      <rect x="46" y="116" width="11" height="15" rx="5" fill="#2C2856"/>
+      <rect x="63" y="116" width="11" height="15" rx="5" fill="#2C2856"/>
+      <!-- brazo izquierdo -->
+      <rect x="28" y="98" width="12" height="22" rx="6" fill="#2C2856" transform="rotate(18 34 100)"/>
+      <!-- brazo derecho con campanita -->
+      <g class="brazo-dcho">
+        <rect x="80" y="98" width="12" height="22" rx="6" fill="#2C2856" transform="rotate(-18 86 100)"/>
+        <g transform="translate(95 118)">
+          <path d="M-7 4 Q-7 -8 0 -9 Q7 -8 7 4 L9 7 L-9 7 Z" fill="#DCB156"/>
+          <circle cx="0" cy="9.5" r="2.4" fill="#BE9957"/>
+          <circle cx="0" cy="-10" r="1.6" fill="#BE9957"/>
+        </g>
+      </g>
+      <!-- cuerpo -->
+      <rect x="40" y="90" width="40" height="32" rx="12" fill="url(#nubiGrad)"/>
+      <path d="M54 112 Q54 102 60 101.5 Q66 102 66 112 L67.5 114 L52.5 114 Z" fill="#BE9957"/>
+      <circle cx="60" cy="115.5" r="1.8" fill="#BE9957"/>
+      <!-- cabeza de nube -->
+      <g fill="url(#nubiGrad)">
+        <circle cx="38" cy="46" r="22"/><circle cx="62" cy="32" r="27"/><circle cx="86" cy="46" r="21"/>
+        <circle cx="24" cy="66" r="18"/><circle cx="98" cy="66" r="17"/>
+        <rect x="22" y="50" width="78" height="40" rx="20"/>
+      </g>
+      <ellipse cx="44" cy="26" rx="11" ry="6" fill="#fff" opacity=".12" transform="rotate(-20 44 26)"/>
+      <!-- cara: pantalla -->
+      <rect x="32" y="46" width="58" height="36" rx="11" fill="url(#nubiPantalla)" stroke="#BE9957" stroke-width="2"/>
+      <g class="cara-normal" fill="none" stroke="#DCB156" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M45 57 L53 64 L45 71"/>
+        <path class="cursor" d="M62 71 H76"/>
+      </g>
+      <g class="cara-feliz" fill="none" stroke="#DCB156" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M43 66 Q48 58 53 66"/><path d="M68 66 Q73 58 78 66"/>
+        <path d="M54 73 Q60 78 66 73" stroke-width="3"/>
+      </g>
+    </svg>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DIAS = ["L","M","X","J","V","S","D"];
+const DIAS_LARGO = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
+let estado = null;        // último estado del servidor
+let cfg = null;           // copia editable de la configuración
+let sucio = false;
+let desfase = 0;          // hora servidor - hora navegador (ms)
+let horarioSel = null;    // horario mostrado en la pestaña Horarios
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(16).slice(2, 12);
+const pad = n => String(n).padStart(2, "0");
+
+function toast(msg, err=false){
+  const t = $("#toast"); t.textContent = msg; t.className = "toast show" + (err ? " err" : "");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.className = "toast", err ? 6000 : 2500);
+}
+
+async function api(metodo, url, cuerpo, crudo=false){
+  const opts = {method: metodo, headers: {}};
+  if (cuerpo !== undefined){
+    if (crudo){ opts.body = cuerpo; }
+    else { opts.body = JSON.stringify(cuerpo); opts.headers["Content-Type"] = "application/json"; }
+  }
+  const r = await fetch(url, opts);
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || ("Error " + r.status));
+  return d;
+}
+
+function marcarSucio(v=true){
+  sucio = v; $("#savebar").classList.toggle("show", v);
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel !== b.dataset.tab));
+  try { localStorage.setItem("timbre-tab", b.dataset.tab); } catch(e){}
+});
+try { const t = localStorage.getItem("timbre-tab"); if (t) document.querySelector(`#tabs button[data-tab="${t}"]`)?.click(); } catch(e){}
+
+/* ---------- carga ---------- */
+async function cargar(forzarConfig=false){
+  try {
+    estado = await api("GET", "/api/estado");
+  } catch(e){
+    $("#estadoPill").className = "pill off"; $("#estadoPill").textContent = "Sin conexión";
+    return;
+  }
+  desfase = new Date(estado.ahora) - new Date();
+  if (!sucio || forzarConfig){
+    cfg = structuredClone(estado.config);
+    if (!horarioSel || !cfg.horarios[horarioSel]) horarioSel = cfg.horario_activo;
+    marcarSucio(false);
+    pintarConfig();
+  }
+  pintarEstado();
+}
+
+function ahoraServidor(){ return new Date(Date.now() + desfase); }
+
+function tick(){
+  const a = ahoraServidor();
+  $("#reloj").textContent = `${pad(a.getHours())}:${pad(a.getMinutes())}:${pad(a.getSeconds())}`;
+  const f = a.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+  $("#fecha").textContent = f.charAt(0).toUpperCase() + f.slice(1);
+  if (estado?.proximos?.length){
+    const p = estado.proximos[0];
+    const ms = new Date(p.momento) - a;
+    if (ms < 0){ cargar(); return; }
+    const s = Math.floor(ms/1000), h = Math.floor(s/3600), m = Math.floor(s%3600/60);
+    $("#proxCuenta").textContent = h >= 24 ? `${Math.floor(h/24)} d ${h%24} h` : (h ? `${h} h ${pad(m)} min` : (m ? `${m} min ${pad(s%60)} s` : `${s%60} s`));
+  }
+}
+
+/* ---------- pintado de estado (no editable) ---------- */
+function pintarEstado(){
+  const c = estado.config;
+  const pill = $("#estadoPill");
+  if (!c.activo){ pill.className = "pill off"; pill.textContent = "Timbre desactivado"; }
+  else if (estado.hoy.sin_timbre){ pill.className = "pill warn"; pill.textContent = "Hoy sin timbre"; }
+  else { pill.className = "pill ok"; pill.textContent = "Activo"; }
+
+  $("#swActivo").checked = c.activo;
+  $("#swTxt").textContent = c.activo ? "Timbre automático activado" : "Timbre automático desactivado";
+
+  const p = estado.proximos[0];
+  if (p){
+    const d = new Date(p.momento);
+    const hoy = ahoraServidor().toDateString() === d.toDateString();
+    $("#proxNombre").textContent = p.nombre || "Toque";
+    $("#proxHora").textContent = (hoy ? "Hoy" : d.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"short"})) + " a las " + p.hora;
+    $("#proxSig").innerHTML = `Sonido: ${esc(p.sonido)}${p.repeticiones>1?" ×"+p.repeticiones:""}<br>` + estado.proximos.slice(1).map(x => {
+      const dx = new Date(x.momento);
+      return `Después: ${esc(x.hora)} ${esc(x.nombre)}` + (dx.toDateString() !== d.toDateString() ? ` (${dx.toLocaleDateString("es-ES",{weekday:"short"})})` : "");
+    }).join("<br>");
+  } else {
+    $("#proxNombre").textContent = c.activo ? "No hay toques programados" : "El timbre automático está desactivado";
+    $("#proxCuenta").textContent = "—"; $("#proxHora").textContent = ""; $("#proxSig").textContent = "";
+  }
+
+  const h = estado.hora, eh = $("#estadoHora");
+  let txtHora;
+  if (!h) txtHora = `<span class="pill info">Comprobando la hora…</span>`;
+  else if (h.ok === true) txtHora = `<span class="pill ok">Hora correcta</span> <span class="muted">desfase ${Math.abs(h.desfase).toFixed(1)} s con ${esc(h.servidor)}</span>`;
+  else if (h.ok === false) txtHora = `<span class="pill off">Reloj desajustado ${Math.abs(h.desfase).toFixed(0)} s</span> <span class="muted">${h.desfase > 0 ? "atrasado" : "adelantado"} respecto a ${esc(h.servidor)}</span>`;
+  else txtHora = `<span class="pill warn">No se pudo comprobar la hora</span> <span class="muted">sin acceso a servidores de hora</span>`;
+  eh.innerHTML = txtHora + `<div class="muted" style="margin-top:4px">Zona horaria: ${esc(estado.zona_horaria)}${h ? " · comprobado " + new Date(h.comprobado).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"}) : ""}</div>`;
+
+  nubiSonando(estado.sonando);
+  $("#sonando").textContent = estado.sonando ? `Sonando ahora: ${estado.sonando}` : "";
+  $("#pieEquipo").textContent = "Equipo: " + estado.sistema.equipo;
+  $("#infoSistema").innerHTML = `Equipo: ${esc(estado.sistema.equipo)} · ${esc(estado.sistema.so)}<br>Audio: ${esc(estado.sistema.audio)}`;
+
+  // hoy
+  const a = ahoraServidor(), hm = `${pad(a.getHours())}:${pad(a.getMinutes())}`;
+  const lista = $("#hoyLista");
+  if (estado.hoy.sin_timbre){
+    $("#hoyInfo").innerHTML = `<span class="pill warn">${esc(estado.hoy.sin_timbre)}</span>`;
+  } else if (!c.activo){
+    $("#hoyInfo").innerHTML = `<span class="pill off">Desactivado</span>`;
+  } else {
+    $("#hoyInfo").innerHTML = `<span class="pill info">${esc(c.horarios[c.horario_activo].nombre)}</span>`;
+  }
+  if (!estado.hoy.toques.length){
+    lista.innerHTML = `<li class="muted">No hay toques los ${DIAS_LARGO[estado.hoy.dia_semana]} en este horario.</li>`;
+  } else {
+    let marcado = false;
+    lista.innerHTML = estado.hoy.toques.map(t => {
+      let cls = "";
+      if (t.hora <= hm) cls = "past";
+      else if (!marcado){ cls = "next"; marcado = true; }
+      return `<li class="${cls}"><span class="t">${esc(t.hora)}</span><span>${esc(t.nombre || "Toque")}</span><span class="spacer"></span><span class="muted" style="font-size:13px">${esc(t.sonido)}${t.repeticiones>1?" ×"+t.repeticiones:""}</span></li>`;
+    }).join("");
+  }
+
+  // sonidos (select manual + tabla)
+  const opts = estado.sonidos.map(s => `<option value="${esc(s.nombre)}">${esc(s.nombre)}</option>`).join("");
+  const ms = $("#manualSonido"), prev = ms.value;
+  ms.innerHTML = opts; if (prev) ms.value = prev;
+  $("#tablaSonidos").innerHTML = estado.sonidos.map(s => `
+    <tr><td>${esc(s.nombre)} ${s.por_defecto ? '<span class="pill info" style="font-size:11px">incluido</span>' : ""}</td>
+    <td>${s.duracion ? s.duracion.toFixed(1)+" s" : "—"}</td>
+    <td>${(s.tamano/1024).toFixed(0)} KB</td>
+    <td class="row" style="justify-content:flex-end">
+      <button class="icon" data-escuchar="${esc(s.nombre)}"><svg class="ico"><use href="#i-headphones"/></svg>Escuchar aquí</button>
+      ${/\.wav$/i.test(s.nombre) ? "" : `<button class="icon gold" data-convertir="${esc(s.nombre)}">Convertir a WAV</button>`}
+      <button class="icon" data-probar="${esc(s.nombre)}"><svg class="ico"><use href="#i-speaker"/></svg>Probar en altavoces</button>
+      <button class="icon danger" data-borrar-sonido="${esc(s.nombre)}" title="Eliminar"><svg class="ico"><use href="#i-trash"/></svg></button>
+    </td></tr>`).join("") || `<tr><td colspan="4" class="empty">No hay sonidos</td></tr>`;
+
+  // registro
+  $("#registro").innerHTML = estado.registro.map(r => {
+    const f = new Date(r.fecha);
+    return `<div class="${esc(r.tipo)}"><time>${f.toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit"})} ${f.toLocaleTimeString("es-ES")}</time><span>${esc(r.texto)}</span></div>`;
+  }).join("") || '<div class="muted">Sin actividad todavía</div>';
+
+  if (!sucio) pintarSelectsHorario();
+}
+
+/* ---------- configuración editable ---------- */
+function opcionesSonido(sel){
+  const nombres = estado.sonidos.map(s => s.nombre);
+  if (sel && !nombres.includes(sel)) nombres.unshift(sel);
+  return nombres.map(n => `<option value="${esc(n)}" ${n===sel?"selected":""}>${esc(n)}${estado.sonidos.some(s=>s.nombre===n)?"":" ⚠ no existe"}</option>`).join("");
+}
+
+function pintarSelectsHorario(){
+  const ops = Object.entries(cfg.horarios).map(([id,h]) => `<option value="${esc(id)}">${esc(h.nombre)}</option>`).join("");
+  $("#selActivoInicio").innerHTML = ops; $("#selActivoInicio").value = cfg.horario_activo;
+  $("#selHorario").innerHTML = ops; $("#selHorario").value = horarioSel;
+  const activo = horarioSel === cfg.horario_activo;
+  $("#esActivo").innerHTML = activo ? '<span class="pill ok">En uso</span>' : '<span class="pill warn">No está en uso</span>';
+  $("#btnActivarH").disabled = activo;
+  $("#btnBorrarH").disabled = Object.keys(cfg.horarios).length < 2;
+}
+
+function pintarConfig(){
+  pintarSelectsHorario();
+  const h = cfg.horarios[horarioSel];
+  const tb = $("#tablaToques");
+  if (!h.toques.length){
+    tb.innerHTML = `<tr><td colspan="7" class="empty">Este horario no tiene toques. Pulsa «Añadir toque».</td></tr>`;
+  } else {
+    tb.innerHTML = h.toques.map((t,i) => `
+      <tr class="${t.activo?"":"off"}" data-i="${i}">
+        <td><input type="time" value="${esc(t.hora)}" data-f="hora" required></td>
+        <td><input type="text" value="${esc(t.nombre)}" data-f="nombre" placeholder="Ej. Fin 1ª hora" style="width:100%;min-width:140px"></td>
+        <td><div class="days">${DIAS.map((d,di) => `<label title="${DIAS_LARGO[di]}"><input type="checkbox" data-dia="${di}" ${t.dias.includes(di)?"checked":""}><span>${d}</span></label>`).join("")}</div></td>
+        <td><select data-f="sonido">${opcionesSonido(t.sonido)}</select></td>
+        <td><input type="number" min="1" max="10" value="${t.repeticiones}" data-f="repeticiones"></td>
+        <td><label class="switch"><input type="checkbox" data-f="activo" ${t.activo?"checked":""}></label></td>
+        <td class="row" style="flex-wrap:nowrap"><button class="icon" data-probar-toque title="Probar en altavoces"><svg class="ico"><use href="#i-speaker"/></svg></button><button class="icon danger" data-borrar-toque title="Eliminar"><svg class="ico"><use href="#i-trash"/></svg></button></td>
+      </tr>`).join("");
+  }
+  $("#tablaFestivos").innerHTML = cfg.dias_sin_timbre.map((d,i) => `
+    <tr data-i="${i}">
+      <td><input type="date" value="${esc(d.desde)}" data-ff="desde"></td>
+      <td><input type="date" value="${esc(d.hasta)}" data-ff="hasta"></td>
+      <td><input type="text" value="${esc(d.motivo)}" data-ff="motivo" placeholder="Ej. Día del Pilar" style="width:100%;min-width:180px"></td>
+      <td><button class="icon danger" data-borrar-festivo title="Eliminar"><svg class="ico"><use href="#i-trash"/></svg></button></td>
+    </tr>`).join("") || `<tr><td colspan="4" class="empty">No hay días sin timbre configurados</td></tr>`;
+}
+
+// edición de toques
+$("#tablaToques").addEventListener("input", e => {
+  const tr = e.target.closest("tr[data-i]"); if (!tr) return;
+  const t = cfg.horarios[horarioSel].toques[+tr.dataset.i];
+  const el = e.target;
+  if (el.dataset.dia !== undefined){
+    const d = +el.dataset.dia;
+    t.dias = el.checked ? [...new Set([...t.dias, d])].sort() : t.dias.filter(x => x !== d);
+  } else if (el.dataset.f === "activo"){ t.activo = el.checked; tr.classList.toggle("off", !el.checked); }
+  else if (el.dataset.f === "repeticiones"){ t.repeticiones = Math.max(1, Math.min(10, +el.value || 1)); }
+  else if (el.dataset.f){ t[el.dataset.f] = el.value; }
+  marcarSucio();
+});
+$("#tablaToques").addEventListener("click", async e => {
+  const tr = e.target.closest("tr[data-i]"); if (!tr) return;
+  const lista = cfg.horarios[horarioSel].toques, i = +tr.dataset.i;
+  if (e.target.closest("[data-borrar-toque]")){
+    if (!confirm(`¿Eliminar el toque de las ${lista[i].hora}?`)) return;
+    lista.splice(i,1); marcarSucio(); pintarConfig();
+  } else if (e.target.closest("[data-probar-toque]")){
+    const t = lista[i]; tocar(t.sonido, t.repeticiones, "Prueba: " + (t.nombre || t.hora));
+  }
+});
+$("#btnAddToque").onclick = () => {
+  const lista = cfg.horarios[horarioSel].toques;
+  const ult = lista[lista.length-1];
+  let hora = "08:00";
+  if (ult){ const [h,m] = ult.hora.split(":").map(Number); const tot = Math.min(h*60+m+55, 23*60+59); hora = `${pad(Math.floor(tot/60))}:${pad(tot%60)}`; }
+  lista.push({id: uid(), hora, nombre: "", dias: ult ? [...ult.dias] : [0,1,2,3,4], sonido: ult?.sonido || estado.sonidos[0]?.nombre || "", repeticiones: 1, activo: true});
+  marcarSucio(); pintarConfig();
+  const filas = document.querySelectorAll("#tablaToques tr"); filas[filas.length-1]?.querySelector("input[type=text]")?.focus();
+};
+
+// horarios
+$("#selHorario").onchange = e => { horarioSel = e.target.value; pintarConfig(); };
+$("#btnActivarH").onclick = () => { cfg.horario_activo = horarioSel; marcarSucio(); pintarConfig(); toast("Recuerda guardar para aplicar el cambio"); };
+$("#btnNuevoH").onclick = () => {
+  const nombre = prompt("Nombre del nuevo horario:", "Horario especial"); if (!nombre) return;
+  const id = "h" + uid(); cfg.horarios[id] = {nombre, toques: []}; horarioSel = id; marcarSucio(); pintarConfig();
+};
+$("#btnDuplicarH").onclick = () => {
+  const o = cfg.horarios[horarioSel];
+  const nombre = prompt("Nombre de la copia:", o.nombre + " (copia)"); if (!nombre) return;
+  const id = "h" + uid(); cfg.horarios[id] = {nombre, toques: o.toques.map(t => ({...t, id: uid(), dias: [...t.dias]}))};
+  horarioSel = id; marcarSucio(); pintarConfig();
+};
+$("#btnRenombrarH").onclick = () => {
+  const h = cfg.horarios[horarioSel]; const n = prompt("Nuevo nombre:", h.nombre); if (!n) return;
+  h.nombre = n; marcarSucio(); pintarConfig();
+};
+$("#btnBorrarH").onclick = () => {
+  if (Object.keys(cfg.horarios).length < 2) return;
+  if (!confirm(`¿Eliminar el horario «${cfg.horarios[horarioSel].nombre}»?`)) return;
+  delete cfg.horarios[horarioSel];
+  if (!cfg.horarios[cfg.horario_activo]) cfg.horario_activo = Object.keys(cfg.horarios)[0];
+  horarioSel = cfg.horario_activo; marcarSucio(); pintarConfig();
+};
+
+// festivos
+$("#tablaFestivos").addEventListener("input", e => {
+  const tr = e.target.closest("tr[data-i]"); if (!tr) return;
+  const d = cfg.dias_sin_timbre[+tr.dataset.i];
+  d[e.target.dataset.ff] = e.target.value;
+  if (e.target.dataset.ff === "desde" && (!d.hasta || d.hasta < d.desde)){ d.hasta = d.desde; tr.querySelector('[data-ff="hasta"]').value = d.desde; }
+  marcarSucio();
+});
+$("#tablaFestivos").addEventListener("click", e => {
+  if (!e.target.closest("[data-borrar-festivo]")) return;
+  cfg.dias_sin_timbre.splice(+e.target.closest("tr").dataset.i, 1); marcarSucio(); pintarConfig();
+});
+$("#btnAddFestivo").onclick = () => {
+  const a = ahoraServidor(); const hoy = `${a.getFullYear()}-${pad(a.getMonth()+1)}-${pad(a.getDate())}`;
+  cfg.dias_sin_timbre.push({id: uid(), desde: hoy, hasta: hoy, motivo: ""}); marcarSucio(); pintarConfig();
+};
+
+// guardar / descartar
+async function guardar(){
+  for (const h of Object.values(cfg.horarios)) for (const t of h.toques){
+    if (!/^\d\d:\d\d$/.test(t.hora)){ toast(`Hora vacía o incorrecta en «${h.nombre}»`, true); return false; }
+    if (!t.dias.length){ toast(`El toque de las ${t.hora} («${h.nombre}») no tiene ningún día marcado`, true); return false; }
+  }
+  for (const d of cfg.dias_sin_timbre) if (!d.desde){ toast("Falta una fecha en «Días sin timbre»", true); return false; }
+  try {
+    await api("PUT", "/api/config", cfg);
+    marcarSucio(false); toast("Cambios guardados"); await cargar(true); return true;
+  } catch(e){ toast(e.message, true); return false; }
+}
+$("#btnGuardar").onclick = guardar;
+$("#btnDescartar").onclick = () => { if (confirm("¿Descartar los cambios?")) cargar(true); };
+window.addEventListener("beforeunload", e => { if (sucio){ e.preventDefault(); e.returnValue = ""; } });
+
+// cambios inmediatos desde Inicio (se guardan al momento)
+async function cambioInmediato(fn){
+  if (sucio && !confirm("Hay otros cambios sin guardar. ¿Guardarlos también?")) return cargar();
+  fn(cfg); marcarSucio(); await guardar();
+}
+$("#swActivo").onchange = e => cambioInmediato(c => c.activo = e.target.checked);
+$("#selActivoInicio").onchange = e => cambioInmediato(c => { c.horario_activo = e.target.value; horarioSel = e.target.value; });
+
+/* ---------- reproducción ---------- */
+async function tocar(sonido, repeticiones=1, etiqueta="Toque manual"){
+  try { await api("POST", "/api/tocar", {sonido, repeticiones, etiqueta}); toast("Sonando en los altavoces"); setTimeout(cargar, 300); }
+  catch(e){ toast(e.message, true); }
+}
+$("#btnTocar").onclick = () => tocar($("#manualSonido").value, +$("#manualRep").value || 1);
+$("#btnParar").onclick = async () => { await api("POST", "/api/parar").catch(()=>{}); cargar(); };
+
+/* ---------- conversión a WAV (se hace en el navegador, sin programas extra) ---------- */
+async function convertirAWav(arrayBuffer){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AC();
+  let buf;
+  try { buf = await ctx.decodeAudioData(arrayBuffer); }
+  finally { try { ctx.close(); } catch(e){} }
+  const canales = Math.min(2, buf.numberOfChannels), sr = buf.sampleRate, n = buf.length;
+  const datos = []; for (let c = 0; c < canales; c++) datos.push(buf.getChannelData(c));
+  const amp = i => { let m = 0; for (const d of datos){ const v = Math.abs(d[i]); if (v > m) m = v; } return m; };
+  let pico = 0; for (let i = 0; i < n; i++){ const v = amp(i); if (v > pico) pico = v; }
+  if (pico < 1e-4) throw new Error("el archivo está en silencio");
+  // Silencio inicial: por debajo de -40 dB del pico (se dejan 10 ms). Final: por debajo de -60 dB (se dejan 150 ms).
+  let ini = 0; while (ini < n && amp(ini) < pico * 0.01) ini++;
+  let fin = n - 1; while (fin > ini && amp(fin) < pico * 0.001) fin--;
+  ini = Math.max(0, ini - Math.round(sr * 0.01));
+  fin = Math.min(n - 1, fin + Math.round(sr * 0.15));
+  const len = fin - ini + 1, ganancia = 0.89 / pico;   // mismo nivel que los sonidos incluidos (-1 dB)
+  const fundido = Math.max(1, Math.min(len, Math.round(sr * 0.02)));
+  const bytes = len * canales * 2;
+  const v = new DataView(new ArrayBuffer(44 + bytes));
+  const txt = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); };
+  txt(0, "RIFF"); v.setUint32(4, 36 + bytes, true); txt(8, "WAVE"); txt(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, canales, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * canales * 2, true); v.setUint16(32, canales * 2, true); v.setUint16(34, 16, true);
+  txt(36, "data"); v.setUint32(40, bytes, true);
+  let o = 44;
+  for (let i = 0; i < len; i++){
+    const f = i >= len - fundido ? (len - 1 - i) / fundido : 1;
+    for (let c = 0; c < canales; c++){
+      const x = Math.max(-1, Math.min(1, datos[c][ini + i] * ganancia * f));
+      v.setInt16(o, x < 0 ? x * 32768 : x * 32767, true); o += 2;
+    }
+  }
+  return {blob: new Blob([v.buffer], {type: "audio/wav"}), duracion: len / sr, recortado: ini / sr};
+}
+const nombreSeguro = n => n.replace(/[^\w\-. ()áéíóúÁÉÍÓÚñÑüÜ]/g, "_");
+const nombreWav = n => n.replace(/\.[^.]+$/, "") + ".wav";
+const detalle = r => `${r.duracion.toFixed(1)} s` + (r.recortado > 0.05 ? `, quitados ${r.recortado.toFixed(1)} s de silencio inicial` : "");
+
+async function subirArchivo(f){
+  let nombre = nombreSeguro(f.name), cuerpo = f, nota = "";
+  try {
+    const r = await convertirAWav(await f.arrayBuffer());
+    if (r.duracion > 120 && !confirm(`«${f.name}» dura ${Math.round(r.duracion)} s. Un timbre suele durar pocos segundos. ¿Subirlo igualmente?`)) return;
+    nombre = nombreWav(nombre); cuerpo = r.blob;
+    nota = ` (WAV, ${detalle(r)})`;
+  } catch(err){
+    if (!confirm(`No se pudo convertir «${f.name}» a WAV (${err.message}). ¿Subir el archivo original tal cual?`)) return;
+  }
+  if (estado.sonidos.some(s => s.nombre === nombre) && !confirm(`Ya existe «${nombre}». ¿Reemplazarlo?`)) return;
+  await api("POST", "/api/sonidos/" + encodeURIComponent(nombre), cuerpo, true);
+  toast(`Subido: ${nombre}${nota}`);
+}
+
+async function convertirExistente(viejo){
+  const resp = await fetch("/sonidos/" + encodeURIComponent(viejo));
+  if (!resp.ok) throw new Error("no se pudo leer el archivo");
+  const r = await convertirAWav(await resp.arrayBuffer());
+  const nuevo = nombreWav(viejo);
+  if (estado.sonidos.some(s => s.nombre === nuevo) && !confirm(`Ya existe «${nuevo}». ¿Reemplazarlo?`)) return;
+  await api("POST", "/api/sonidos/" + encodeURIComponent(nuevo), r.blob, true);
+  if (sucio){
+    toast(`Creado ${nuevo}. Guarda tus cambios y elige el nuevo sonido en los toques.`);
+    return cargar();
+  }
+  let cambios = 0;
+  for (const h of Object.values(cfg.horarios)) for (const t of h.toques) if (t.sonido === viejo){ t.sonido = nuevo; cambios++; }
+  if (cambios) await api("PUT", "/api/config", cfg);
+  await api("DELETE", "/api/sonidos/" + encodeURIComponent(viejo)).catch(() => {});
+  toast(`Convertido a ${nuevo} (${detalle(r)})` + (cambios ? ` · ${cambios} toque(s) actualizados` : ""));
+  await cargar(true);
+}
+
+let audioLocal = null;
+$("#tablaSonidos").addEventListener("click", async e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.escuchar){
+    audioLocal?.pause(); audioLocal = new Audio("/sonidos/" + encodeURIComponent(b.dataset.escuchar)); audioLocal.play();
+  } else if (b.dataset.probar){
+    tocar(b.dataset.probar, 1, "Prueba de sonido");
+  } else if (b.dataset.convertir){
+    b.disabled = true;
+    try { await convertirExistente(b.dataset.convertir); }
+    catch(err){ toast(`No se pudo convertir: ${err.message}`, true); b.disabled = false; }
+  } else if (b.dataset.borrarSonido){
+    if (!confirm(`¿Eliminar el sonido «${b.dataset.borrarSonido}»?`)) return;
+    try { await api("DELETE", "/api/sonidos/" + encodeURIComponent(b.dataset.borrarSonido)); toast("Sonido eliminado"); cargar(); }
+    catch(err){ toast(err.message, true); }
+  }
+});
+$("#fileSonido").onchange = async e => {
+  const archivos = [...e.target.files]; e.target.value = "";
+  for (const f of archivos){
+    try { await subirArchivo(f); } catch(err){ toast(`${f.name}: ${err.message}`, true); }
+    await cargar();
+  }
+};
+
+/* ---------- importar ---------- */
+$("#fileImport").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const datos = JSON.parse(await f.text());
+    if (!confirm("Se reemplazarán todos los horarios y días sin timbre actuales. ¿Continuar?")) return;
+    await api("PUT", "/api/config", datos); toast("Configuración importada"); horarioSel = null; cargar(true);
+  } catch(err){ toast("No se pudo importar: " + err.message, true); }
+};
+
+/* ---------- Nubi, la mascota ---------- */
+const nubi = $("#nubi"), bocadillo = $("#nubiBocadillo");
+const guardarLocal = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} };
+const leerLocal = k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } };
+let nubiPos = leerLocal("nubi-pos");            // posición relativa (0..1) a la ventana
+let bocadilloTimer = null, ultimoSonando = null;
+
+function colocarNubi(){
+  const w = nubi.offsetWidth, h = nubi.offsetHeight;
+  const maxX = window.innerWidth - w - 8, maxY = window.innerHeight - h - 12;
+  let x, y;
+  if (nubiPos){ x = nubiPos.x * window.innerWidth; y = nubiPos.y * window.innerHeight; }
+  else { x = window.innerWidth - w - 28; y = window.innerHeight - h - 90; }
+  x = Math.max(8, Math.min(maxX, x)); y = Math.max(8, Math.min(maxY, y));
+  nubi.style.left = x + "px"; nubi.style.top = y + "px";
+  nubi.classList.toggle("izq", x + w / 2 < window.innerWidth / 2);
+}
+function decir(html, ms = 5000){
+  bocadillo.innerHTML = html; bocadillo.classList.add("ver");
+  clearTimeout(bocadilloTimer);
+  if (ms) bocadilloTimer = setTimeout(() => bocadillo.classList.remove("ver"), ms);
+}
+function textoProximo(){
+  if (!estado) return "Cargando…";
+  if (!estado.config.activo) return "El timbre automático está <b>desactivado</b>.";
+  const p = estado.proximos[0];
+  if (!p) return "No hay toques programados.";
+  const d = new Date(p.momento), ms = d - ahoraServidor();
+  const min = Math.max(0, Math.round(ms / 60000));
+  const falta = min < 1 ? "menos de un minuto" : min < 60 ? `${min} min` : `${Math.floor(min/60)} h ${min%60} min`;
+  const hoy = d.toDateString() === ahoraServidor().toDateString();
+  return `Próximo toque: <b>${esc(p.nombre || "Toque")}</b><br>${hoy ? "hoy" : d.toLocaleDateString("es-ES",{weekday:"long"})} a las <b>${esc(p.hora)}</b> · faltan ${falta}`;
+}
+function nubiSonando(sonando){
+  nubi.classList.toggle("sonando", !!sonando);
+  if (sonando && sonando !== ultimoSonando) decir(`<b>¡Riiing!</b><br>${esc(sonando)}`, 6000);
+  ultimoSonando = sonando;
+}
+// Arrastrar (ratón y pantalla táctil)
+let arrastre = null;
+nubi.addEventListener("pointerdown", e => {
+  if (e.target.closest(".nubi-bocadillo")) return;
+  const r = nubi.getBoundingClientRect();
+  arrastre = {dx: e.clientX - r.left, dy: e.clientY - r.top, x0: e.clientX, y0: e.clientY, movido: false};
+  nubi.setPointerCapture(e.pointerId);
+});
+nubi.addEventListener("pointermove", e => {
+  if (!arrastre) return;
+  if (!arrastre.movido && Math.hypot(e.clientX - arrastre.x0, e.clientY - arrastre.y0) < 5) return;
+  if (!arrastre.movido){ arrastre.movido = true; nubi.classList.add("arrastrando"); bocadillo.classList.remove("ver"); }
+  nubiPos = {x: (e.clientX - arrastre.dx) / window.innerWidth, y: (e.clientY - arrastre.dy) / window.innerHeight};
+  colocarNubi();
+});
+const soltar = e => {
+  if (!arrastre) return;
+  const fueClic = !arrastre.movido; arrastre = null;
+  nubi.classList.remove("arrastrando");
+  if (fueClic){
+    if (bocadillo.classList.contains("ver")) bocadillo.classList.remove("ver");
+    else decir(textoProximo() + `<br><button type="button" id="ocultarNubi">Ocultar</button>`, 7000);
+  } else guardarLocal("nubi-pos", nubiPos);
+};
+nubi.addEventListener("pointerup", soltar);
+nubi.addEventListener("pointercancel", soltar);
+nubi.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); decir(textoProximo(), 6000); } });
+bocadillo.addEventListener("click", e => {
+  if (e.target.id !== "ocultarNubi") return;
+  nubi.classList.add("hidden"); $("#mostrarNubi").classList.remove("hidden"); guardarLocal("nubi-oculta", true);
+});
+$("#mostrarNubi").onclick = () => {
+  nubi.classList.remove("hidden"); $("#mostrarNubi").classList.add("hidden"); guardarLocal("nubi-oculta", false);
+  colocarNubi(); decir("¡Hola de nuevo!", 2500);
+};
+if (leerLocal("nubi-oculta")){ nubi.classList.add("hidden"); $("#mostrarNubi").classList.remove("hidden"); }
+window.addEventListener("resize", colocarNubi);
+colocarNubi();
+if (!leerLocal("nubi-saludado")) setTimeout(() => {
+  if (nubi.classList.contains("hidden") || bocadillo.classList.contains("ver")) return;
+  decir("¡Hola! Soy <b>Nubi</b>. Pulsa sobre mí para ver el próximo toque, o arrástrame donde quieras.", 7000);
+  guardarLocal("nubi-saludado", true);
+}, 1500);
+
+cargar(true);
+setInterval(tick, 250);
+setInterval(() => cargar(), 5000);
+</script>
+</body>
+</html>
