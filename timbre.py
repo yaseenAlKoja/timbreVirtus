@@ -44,6 +44,7 @@ SONIDOS = BASE / "sonidos"
 WEB = BASE / "web"
 CONFIG_PATH = DATOS / "config.json"
 REGISTRO_PATH = DATOS / "registro.log"
+REPO_GITHUB = "yaseenAlKoja/timbreVirtus"
 
 # Identidad Virtus College: se usan los archivos de web/marca/ (los descarga el
 # instalador); si no están, el navegador los pide a la web oficial.
@@ -454,7 +455,8 @@ def validar_config(c):
     horarios = c.get("horarios")
     if not isinstance(horarios, dict) or not horarios:
         raise ErrorValidacion("Debe existir al menos un horario")
-    limpio = {"version": 1, "activo": bool(c.get("activo", True)), "horarios": {}, "dias_sin_timbre": []}
+    limpio = {"version": 1, "activo": bool(c.get("activo", True)), "horarios": {}, "dias_sin_timbre": [],
+              "actualizar_automaticamente": bool(c.get("actualizar_automaticamente", True))}
     for hid, h in horarios.items():
         if not re.match(r"^[\w\-]{1,40}$", str(hid)):
             raise ErrorValidacion(f"Identificador de horario no válido: {hid}")
@@ -636,6 +638,10 @@ class Timbre:
         disparados = {}  # "fecha hora|id" -> momento, para no tocar dos veces el mismo toque
         while True:
             time.sleep(0.5)
+            if (DATOS / "salir.flag").exists():
+                self._anotar("sistema", "Cerrando para instalar una actualización")
+                self.reproductor.parar()
+                os._exit(0)
             try:
                 ahora = datetime.now()
                 salto = (ahora - anterior).total_seconds()
@@ -694,6 +700,90 @@ class Timbre:
         self.hora = resultado
         return resultado
 
+    # ----- versiones y actualizaciones
+    @staticmethod
+    def version_instalada():
+        try:
+            return json.loads((DATOS / "version.json").read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            return {"sha": "", "mensaje": "", "fecha_commit": "", "instalada": ""}
+
+    @staticmethod
+    def ultima_actualizacion():
+        try:
+            return json.loads((DATOS / "actualizacion.json").read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            return None
+
+    def version_disponible(self, forzar=False):
+        """Última versión publicada en GitHub (se consulta como mucho cada 5 minutos)."""
+        import urllib.request
+        cache = getattr(self, "_cache_github", None)
+        if cache and not forzar and time.time() - cache[0] < 300:
+            return cache[1]
+        req = urllib.request.Request(f"https://api.github.com/repos/{REPO_GITHUB}/commits/main",
+                                     headers={"User-Agent": "TimbreEscolar", "Accept": "application/vnd.github+json"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            d = json.loads(r.read())
+        info = {"sha": d["sha"], "mensaje": d["commit"]["message"].splitlines()[0][:150],
+                "fecha_commit": d["commit"]["committer"]["date"]}
+        self._cache_github = (time.time(), info)
+        return info
+
+    def comprobar_actualizacion(self, forzar=False):
+        instalada = self.version_instalada()
+        try:
+            disponible = self.version_disponible(forzar)
+        except Exception as e:  # noqa: BLE001
+            return {"instalada": instalada, "disponible": None, "hay_nueva": False,
+                    "error": f"No se pudo consultar GitHub: {e}"}
+        return {"instalada": instalada, "disponible": disponible, "error": None,
+                "hay_nueva": disponible["sha"] != instalada.get("sha")}
+
+    def iniciar_actualizacion(self, info):
+        act = self.ultima_actualizacion()
+        if act and act.get("estado") == "en_curso":
+            try:
+                if (datetime.now() - datetime.fromisoformat(act["fecha"])).total_seconds() < 300:
+                    raise ErrorValidacion("Ya hay una actualización en curso")
+            except (KeyError, ValueError):
+                pass
+        exe = sys.executable
+        if platform.system() == "Windows" and exe.lower().endswith("python.exe"):
+            w = Path(exe).with_name("pythonw.exe")
+            exe = str(w) if w.exists() else exe
+        cmd = [exe, str(BASE / "actualizar.py"), "--sha", info["sha"], "--mensaje", info.get("mensaje", ""),
+               "--fecha-commit", info.get("fecha_commit", ""), "--", *sys.argv[1:]]
+        opciones = {"cwd": str(BASE), "stdin": subprocess.DEVNULL, "stdout": subprocess.DEVNULL,
+                    "stderr": subprocess.DEVNULL}
+        if platform.system() == "Windows":
+            opciones["creationflags"] = 0x00000008 | 0x00000200 | 0x08000000
+        else:
+            opciones["start_new_session"] = True
+        subprocess.Popen(cmd, **opciones)
+        self._anotar("sistema", f"Buscando e instalando la versión {info['sha'][:7]}…")
+
+    def bucle_actualizacion(self):
+        """Cada noche, a las 3:00, instala la última versión si hay una nueva y está activado."""
+        ultima_noche = None
+        while True:
+            time.sleep(600)
+            try:
+                ahora = datetime.now()
+                if not (self.config.get("actualizar_automaticamente", True) and ahora.hour == 3):
+                    continue
+                if ultima_noche == ahora.date():
+                    continue
+                ultima_noche = ahora.date()
+                if self.toques_pendientes(ahora, ahora + timedelta(minutes=30)):
+                    continue  # nunca justo antes de un toque
+                r = self.comprobar_actualizacion(forzar=True)
+                if r["hay_nueva"]:
+                    self._anotar("sistema", "Actualización automática nocturna")
+                    self.iniciar_actualizacion(r["disponible"])
+            except Exception as e:  # noqa: BLE001
+                self._error(f"Comprobación de actualizaciones: {e}")
+
     # ----- estado para el panel
     def estado(self):
         with self.lock:
@@ -717,6 +807,8 @@ class Timbre:
             "sonidos": sonidos,
             "registro": registro[:50],
             "hora": self.hora,
+            "version": self.version_instalada(),
+            "actualizacion": self.ultima_actualizacion(),
             "zona_horaria": zona_horaria(),
             "sistema": {"audio": self.reproductor.descripcion(), "equipo": platform.node(),
                         "so": f"{platform.system()} {platform.release()}",
@@ -796,6 +888,10 @@ def crear_manejador(app, clave):
                         return self._archivo(WEB / "index.html", "text/html; charset=utf-8")
                     if ruta == "/api/estado":
                         return self._json(app.estado())
+                    if ruta == "/api/version":
+                        return self._json(app.version_instalada())
+                    if ruta == "/api/actualizacion":
+                        return self._json(app.comprobar_actualizacion(forzar=True))
                     if ruta == "/api/exportar":
                         cuerpo = json.dumps(app.config, ensure_ascii=False, indent=2).encode("utf-8")
                         self.send_response(200)
@@ -829,6 +925,14 @@ def crear_manejador(app, clave):
                         ok = app.sonar(str(d.get("sonido", "")), rep, str(d.get("etiqueta", ""))[:80] or "Toque manual",
                                        "manual")
                         return self._json({"ok": ok}, 200 if ok else 404)
+                    if ruta == "/api/actualizar":
+                        r = app.comprobar_actualizacion(forzar=True)
+                        if r["error"]:
+                            raise ErrorValidacion(r["error"])
+                        if not r["hay_nueva"]:
+                            return self._json({"ok": False, "mensaje": "Ya tienes la última versión"})
+                        app.iniciar_actualizacion(r["disponible"])
+                        return self._json({"ok": True, "sha": r["disponible"]["sha"]})
                     if ruta == "/api/parar":
                         app.parar()
                         return self._json({"ok": True})
@@ -911,7 +1015,7 @@ def main():
 
     if not una_sola_instancia():
         log("El timbre ya está en marcha en este equipo (no se inicia otra copia).")
-        sys.exit(3)
+        sys.exit(0)
 
     host = "127.0.0.1" if args.solo_local else "0.0.0.0"
     servidor = None
@@ -922,8 +1026,10 @@ def main():
         except OSError as e:
             log(f"No se puede abrir el puerto {args.puerto} ({e}); reintentando…")
             time.sleep(2)
+    (DATOS / "salir.flag").unlink(missing_ok=True)  # aviso de cierre antiguo, si quedó alguno
     threading.Thread(target=app.bucle_planificador, daemon=True, name="planificador").start()
     threading.Thread(target=app.bucle_hora, daemon=True, name="hora").start()
+    threading.Thread(target=app.bucle_actualizacion, daemon=True, name="actualizacion").start()
     if servidor is None:
         app._error(f"No se pudo abrir el panel web en el puerto {args.puerto}; el timbre sigue funcionando")
         while True:

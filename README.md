@@ -120,6 +120,24 @@ Así, cuando vuelve la luz: el PC se enciende → Windows entra solo → el timb
 
 > **El horario y las vacaciones que vienen son de ejemplo.** Cámbialos por los del colegio y pulsa **Guardar cambios**.
 
+## Actualizaciones (sin ir al colegio)
+
+Los cambios se publican en GitHub (`yaseenAlKoja/timbreVirtus`, rama `main`) y el PC del colegio los instala solo:
+
+- **Desde el panel:** pestaña **Registro → Versión y actualizaciones → Buscar actualizaciones → Actualizar ahora**.
+  Funciona también desde fuera, por `timbre.virtuscollege.com`.
+- **Automáticamente cada noche a las 3:00**, si está activado el interruptor de esa tarjeta (activado por defecto)
+  y no hay ningún toque en la media hora siguiente.
+
+Cómo se protege el timbre durante la actualización (`actualizar.py`):
+1. Descarga la versión de GitHub y la **prueba aparte** (si tiene errores, no toca nada).
+2. Hace **copia de seguridad** de la versión actual en `respaldo\`.
+3. Cierra el timbre, copia la versión nueva y lo vuelve a arrancar (unos 2 segundos).
+4. Si la versión nueva **no responde en 40 segundos, vuelve sola a la anterior**.
+
+Nunca se tocan `datos\` (horarios, festivos, registro), los sonidos subidos, `python\` ni `cloudflared\`.
+El repositorio debe ser **público** para que el PC pueda descargarlo sin contraseñas (no contiene secretos).
+
 ## Archivos y mantenimiento
 
 ```
@@ -131,6 +149,8 @@ C:\TimbreEscolar\
 ├── datos\config.json         horarios y festivos   ← guarda una copia
 ├── datos\registro.log        historial de toques
 ├── datos\consola.log         mensajes técnicos
+├── actualizar.py             actualizador (botón del panel y comprobación nocturna)
+├── respaldo\                 copia de la versión anterior (la crea el actualizador)
 ├── python\                   Python portátil
 ├── cloudflared\              túnel de Cloudflare (si se activa el acceso remoto)
 └── herramientas\             instalador y diagnóstico

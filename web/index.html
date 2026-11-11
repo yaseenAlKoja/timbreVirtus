@@ -312,6 +312,17 @@ footer span{opacity:.75}
         <div class="log" id="registro"></div>
       </div>
       <div class="card">
+        <h2>Versión y actualizaciones</h2>
+        <div id="versionInfo" class="muted" style="font-size:14px;margin-bottom:12px">—</div>
+        <div id="versionNueva" style="font-size:14px;margin-bottom:12px"></div>
+        <div class="row" style="margin-bottom:14px">
+          <button id="btnBuscarAct"><svg class="ico"><use href="#i-download"/></svg>Buscar actualizaciones</button>
+          <button id="btnActualizar" class="gold hidden"><svg class="ico"><use href="#i-check"/></svg>Actualizar ahora</button>
+        </div>
+        <label class="switch"><input type="checkbox" id="swAutoAct"> <span>Actualizar automáticamente por la noche (3:00)</span></label>
+        <p class="muted" style="font-size:13px;margin:10px 0 0">Las actualizaciones se descargan de GitHub. Se hace copia de seguridad antes y, si la versión nueva no arranca, se vuelve sola a la anterior. Los horarios, festivos y sonidos nunca se tocan.</p>
+      </div>
+      <div class="card">
         <h2>Copia de seguridad</h2>
         <p class="muted" style="margin-top:0">Descarga toda la configuración (horarios y días sin timbre) o restaura una copia anterior.</p>
         <div class="row">
@@ -538,6 +549,7 @@ function pintarEstado(){
     return `<div class="${esc(r.tipo)}"><time>${f.toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit"})} ${f.toLocaleTimeString("es-ES")}</time><span>${esc(r.texto)}</span></div>`;
   }).join("") || '<div class="muted">Sin actividad todavía</div>';
 
+  pintarVersion();
   if (!sucio) pintarSelectsHorario();
 }
 
@@ -790,6 +802,55 @@ $("#fileSonido").onchange = async e => {
     await cargar();
   }
 };
+
+/* ---------- versión y actualizaciones ---------- */
+const fechaCorta = iso => iso ? new Date(iso).toLocaleString("es-ES", {day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"}) : "";
+function pintarVersion(){
+  const v = estado.version || {}, act = estado.actualizacion;
+  $("#versionInfo").innerHTML = v.sha
+    ? `Versión instalada: <b>${esc(v.sha.slice(0,7))}</b> · ${esc(v.mensaje || "")}<br>Publicada ${esc(fechaCorta(v.fecha_commit))} · instalada ${esc(fechaCorta(v.instalada))}`
+    : "Versión instalada: <b>sin identificar</b> (instalada a mano). Pulsa «Buscar actualizaciones».";
+  if (act && act.estado === "error") $("#versionNueva").innerHTML = `<span class="pill off">La última actualización falló</span> <span class="muted">${esc(act.error || "")}</span>`;
+  else if (act && act.estado === "revertida") $("#versionNueva").innerHTML = `<span class="pill warn">La versión nueva no arrancó y se volvió a la anterior</span>`;
+  $("#swAutoAct").checked = cfg ? cfg.actualizar_automaticamente !== false : true;
+}
+$("#btnBuscarAct").onclick = async () => {
+  const b = $("#btnBuscarAct"); b.disabled = true; $("#versionNueva").textContent = "Consultando GitHub…";
+  try {
+    const r = await api("GET", "/api/actualizacion");
+    if (r.error){ $("#versionNueva").innerHTML = `<span class="pill off">${esc(r.error)}</span>`; $("#btnActualizar").classList.add("hidden"); }
+    else if (r.hay_nueva){
+      $("#versionNueva").innerHTML = `<span class="pill warn">Hay una versión nueva</span> <b>${esc(r.disponible.sha.slice(0,7))}</b> · ${esc(r.disponible.mensaje)} <span class="muted">(${esc(fechaCorta(r.disponible.fecha_commit))})</span>`;
+      $("#btnActualizar").classList.remove("hidden");
+    } else { $("#versionNueva").innerHTML = `<span class="pill ok">Tienes la última versión</span>`; $("#btnActualizar").classList.add("hidden"); }
+  } catch(e){ $("#versionNueva").innerHTML = `<span class="pill off">${esc(e.message)}</span>`; }
+  b.disabled = false;
+};
+$("#btnActualizar").onclick = async () => {
+  if (!confirm("Se instalará la versión nueva y el timbre se reiniciará unos segundos. ¿Continuar?")) return;
+  const antes = (estado.version || {}).sha || "";
+  try {
+    const r = await api("POST", "/api/actualizar");
+    if (!r.ok){ toast(r.mensaje || "No hay nada que actualizar"); return; }
+  } catch(e){ toast(e.message, true); return; }
+  $("#btnActualizar").disabled = true;
+  $("#versionNueva").innerHTML = `<span class="pill warn">Actualizando…</span> <span class="muted">el panel se recargará solo</span>`;
+  const inicio = Date.now();
+  const comprobar = async () => {
+    try {
+      const v = await (await fetch("/api/version", {cache: "no-store"})).json();
+      if (v.sha && v.sha !== antes){ toast("Actualizado. Recargando…"); setTimeout(() => location.reload(), 1200); return; }
+      const est = await (await fetch("/api/estado", {cache: "no-store"})).json();
+      if (est.actualizacion && ["error","revertida"].includes(est.actualizacion.estado) && Date.now() - inicio > 5000){
+        estado = est; pintarVersion(); $("#btnActualizar").disabled = false; return;
+      }
+    } catch(e){ /* el timbre se está reiniciando */ }
+    if (Date.now() - inicio < 180000) setTimeout(comprobar, 3000);
+    else toast("La actualización está tardando. Revisa el Registro en unos minutos.", true);
+  };
+  setTimeout(comprobar, 4000);
+};
+$("#swAutoAct").onchange = e => cambioInmediato(c => c.actualizar_automaticamente = e.target.checked);
 
 /* ---------- importar ---------- */
 $("#fileImport").onchange = async e => {
