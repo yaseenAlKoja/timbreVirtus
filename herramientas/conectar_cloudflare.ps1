@@ -67,7 +67,15 @@ if (Get-Service -Name cloudflared -ErrorAction SilentlyContinue) {
     & sc.exe delete cloudflared | Out-Null
 }
 Get-Process -Name cloudflared -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-Start-Sleep -Seconds 3
+# Esperar a que Windows borre de verdad el servicio anterior (si no, la instalación nueva falla)
+for ($i = 0; $i -lt 20 -and (Get-Service -Name cloudflared -ErrorAction SilentlyContinue); $i++) { Start-Sleep -Seconds 1 }
+if (Get-Service -Name cloudflared -ErrorAction SilentlyContinue) {
+    Write-Host ""
+    Write-Host "Windows todavia esta borrando el servicio anterior de Cloudflare." -ForegroundColor Red
+    Write-Host "REINICIA EL PC y, al volver, ejecuta otra vez CONECTAR_CLOUDFLARE.bat." -ForegroundColor Yellow
+    Read-Host "Pulsa Intro para salir"; exit 1
+}
+Start-Sleep -Seconds 2
 New-Item -ItemType Directory -Force -Path $cfDir | Out-Null
 if (Test-Path $cfExe) {
     try { Remove-Item $cfExe -Force }
@@ -87,8 +95,16 @@ if ($ver.ExitCode -ne 0) { throw "cloudflared.exe no funciona en este equipo (co
 Ok "cloudflared descargado y comprobado"
 
 Write-Host "Instalando el servicio del tunel..."
-$inst = Start-Process -FilePath $cfExe -ArgumentList "service", "install", $token -Wait -PassThru -WindowStyle Hidden
-if ($inst.ExitCode -ne 0) { Aviso "cloudflared termino con codigo $($inst.ExitCode)" }
+$salida = Join-Path $env:TEMP "cloudflared-install-out.txt"
+$errores = Join-Path $env:TEMP "cloudflared-install-err.txt"
+$inst = Start-Process -FilePath $cfExe -ArgumentList "service", "install", $token -Wait -PassThru -WindowStyle Hidden `
+    -RedirectStandardOutput $salida -RedirectStandardError $errores
+if ($inst.ExitCode -ne 0) {
+    Aviso "cloudflared termino con codigo $($inst.ExitCode). Su mensaje:"
+    (@(Get-Content $salida -ErrorAction SilentlyContinue) + @(Get-Content $errores -ErrorAction SilentlyContinue)) |
+        Where-Object { $_ -and $_ -notmatch "eyJ" } | Select-Object -Last 6 | ForEach-Object { Write-Host "       $_" -ForegroundColor Yellow }
+}
+Remove-Item $salida, $errores -Force -ErrorAction SilentlyContinue
 $enMarcha = $false
 for ($i = 0; $i -lt 30; $i++) {
     Start-Sleep -Seconds 1
