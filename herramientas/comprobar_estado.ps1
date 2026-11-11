@@ -8,6 +8,28 @@ function Bien($t)   { Write-Host "  [OK] $t" -ForegroundColor Green }
 function Mal($t)    { Write-Host "  [X]  $t" -ForegroundColor Red }
 function Info($t)   { Write-Host "       $t" }
 
+function Estado-Tunel {
+    # cloudflared publica su estado en 127.0.0.1:20241-20245/ready (readyConnections > 0 = conectado a Cloudflare)
+    foreach ($puerto in 20241..20245) {
+        try {
+            $r = Invoke-WebRequest -Uri "http://127.0.0.1:$puerto/ready" -UseBasicParsing -TimeoutSec 2
+            return [int](($r.Content | ConvertFrom-Json).readyConnections)
+        } catch {
+            if ($_.Exception.Response) {
+                try {
+                    $lector = New-Object IO.StreamReader($_.Exception.Response.GetResponseStream())
+                    return [int](($lector.ReadToEnd() | ConvertFrom-Json).readyConnections)
+                } catch { return 0 }
+            }
+        }
+    }
+    return -1   # no se encontró cloudflared escuchando
+}
+function Huella($texto) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    (($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($texto)) | ForEach-Object { $_.ToString("x2") }) -join "").Substring(0, 12).ToUpper()
+}
+
 Clear-Host
 Write-Host "==============================================================" -ForegroundColor Cyan
 Write-Host "        DIAGNOSTICO DEL TIMBRE ESCOLAR  $(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')" -ForegroundColor Cyan
@@ -74,7 +96,7 @@ try {
     else { Mal "El panel NO responde en http://localhost:8080" }
 }
 $log = "C:\TimbreEscolar\datos\registro.log"
-if (Test-Path $log) { Info "Ultimas lineas del registro:"; Get-Content $log -Tail 4 | ForEach-Object { Info "  $_" } }
+if (Test-Path $log) { Info "Ultimas lineas del registro:"; Get-Content $log -Tail 4 -Encoding UTF8 | ForEach-Object { Info "  $_" } }
 
 # ---------------------------------------------------------------- Cloudflare
 Titulo "6. Tunel de Cloudflare (timbre.virtuscollege.com)"
@@ -82,13 +104,21 @@ $svc = Get-Service -Name cloudflared
 if (-not $svc) { Mal "El servicio cloudflared no esta instalado (ejecuta CONECTAR_CLOUDFLARE.bat)" }
 else {
     if ($svc.Status -eq "Running") { Bien "Servicio cloudflared en marcha" } else { Mal "Servicio cloudflared: $($svc.Status)" }
-    $img = (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\cloudflared").ImagePath
-    $m = [regex]::Match([string]$img, "eyJ[A-Za-z0-9+/_-]{40,}={0,2}")
-    if ($m.Success) {
-        $sha = [Security.Cryptography.SHA256]::Create()
-        $h = ($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($m.Value)) | ForEach-Object { $_.ToString("x2") }) -join ""
-        Info "Huella del token instalado: $($h.Substring(0,12).ToUpper())   (comparala con la que te diga Claude; el token no se muestra)"
+    $img = [string](Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\cloudflared").ImagePath
+    $tok = [regex]::Match($img, "eyJ[A-Za-z0-9+/_-]{40,}={0,2}")
+    $fich = [regex]::Match($img, '--token-file\s+"?([^"]+?)"?(\s+--|\s*$)')
+    if ($tok.Success) { Info "Huella del token instalado: $(Huella $tok.Value)" }
+    elseif ($fich.Success) {
+        $ruta = $fich.Groups[1].Value.Trim()
+        try {
+            $contenido = (Get-Content -LiteralPath $ruta -Raw -ErrorAction Stop).Trim()
+            Info "Huella del token instalado: $(Huella $contenido)   (comparala con la que te diga Claude)"
+        } catch { Info "El token esta guardado en un archivo protegido (normal). Para ver su huella, ejecuta este diagnostico como administrador." }
     } else { Mal "El servicio no tiene token (se instalo sin el texto eyJ...)" }
+    $con = Estado-Tunel
+    if ($con -gt 0) { Bien "Conectado a Cloudflare ($con conexiones): timbre.virtuscollege.com funciona" }
+    elseif ($con -eq 0) { Mal "Cloudflare RECHAZA la conexion: token antiguo. Recarga Cloudflare (F5), copia de nuevo y ejecuta CONECTAR_CLOUDFLARE.bat" }
+    else { Info "No se pudo leer el estado de conexion de cloudflared" }
     $ev = Get-WinEvent -FilterHashtable @{ LogName = "Application"; ProviderName = "cloudflared" } -MaxEvents 4
     if ($ev) { Info "Ultimos mensajes de cloudflared:"; $ev | ForEach-Object { Info ("  " + $_.TimeCreated.ToString("HH:mm:ss") + "  " + (($_.Message -split "`n")[0]).Substring(0, [Math]::Min(110, (($_.Message -split "`n")[0]).Length))) } }
 }

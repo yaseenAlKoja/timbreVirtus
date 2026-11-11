@@ -18,6 +18,28 @@ trap {
 function Ok($t)    { Write-Host "  [OK] $t" -ForegroundColor Green }
 function Aviso($t) { Write-Host "  [!]  $t" -ForegroundColor Yellow }
 
+function Estado-Tunel {
+    # cloudflared publica su estado en 127.0.0.1:20241-20245/ready (readyConnections > 0 = conectado a Cloudflare)
+    foreach ($puerto in 20241..20245) {
+        try {
+            $r = Invoke-WebRequest -Uri "http://127.0.0.1:$puerto/ready" -UseBasicParsing -TimeoutSec 2
+            return [int](($r.Content | ConvertFrom-Json).readyConnections)
+        } catch {
+            if ($_.Exception.Response) {
+                try {
+                    $lector = New-Object IO.StreamReader($_.Exception.Response.GetResponseStream())
+                    return [int](($lector.ReadToEnd() | ConvertFrom-Json).readyConnections)
+                } catch { return 0 }
+            }
+        }
+    }
+    return -1   # no se encontró cloudflared escuchando
+}
+function Huella($texto) {
+    $sha = [Security.Cryptography.SHA256]::Create()
+    (($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($texto)) | ForEach-Object { $_.ToString("x2") }) -join "").Substring(0, 12).ToUpper()
+}
+
 $cfDir = "C:\TimbreEscolar\cloudflared"
 $cfExe = "$cfDir\cloudflared.exe"
 
@@ -36,7 +58,7 @@ if (-not $m.Success) {
     Read-Host "Pulsa Intro para salir"; exit 1
 }
 $token = $m.Value
-Ok "Token reconocido ($($token.Length) caracteres)"
+Ok "Token reconocido (huella $(Huella $token))"
 
 Write-Host ""
 Write-Host "Limpiando intentos anteriores..."
@@ -73,12 +95,27 @@ for ($i = 0; $i -lt 30; $i++) {
     $s = Get-Service -Name cloudflared -ErrorAction SilentlyContinue
     if ($s -and $s.Status -eq "Running") { $enMarcha = $true; break }
 }
-if ($enMarcha) {
-    Set-Service -Name cloudflared -StartupType Automatic
-    Ok "Tunel instalado y en marcha (arranca solo con el PC)"
-    Write-Host ""
-    Write-Host "En 1 minuto, https://timbre.virtuscollege.com mostrara el panel del timbre." -ForegroundColor Green
-} else {
+if (-not $enMarcha) {
     Aviso "El servicio no ha arrancado. Comprueba que el token es el actual (copialo de nuevo de Cloudflare)."
+} else {
+    Set-Service -Name cloudflared -StartupType Automatic
+    Ok "Servicio del tunel en marcha (arranca solo con el PC)"
+    Write-Host "Comprobando que Cloudflare acepta la conexion (hasta 40 s)..."
+    $conexiones = -1
+    for ($i = 0; $i -lt 20; $i++) {
+        Start-Sleep -Seconds 2
+        $conexiones = Estado-Tunel
+        if ($conexiones -gt 0) { break }
+    }
+    Write-Host ""
+    if ($conexiones -gt 0) {
+        Ok "CONECTADO a Cloudflare ($conexiones conexiones)"
+        Write-Host "https://timbre.virtuscollege.com ya muestra el panel del timbre." -ForegroundColor Green
+    } elseif ($conexiones -eq 0) {
+        Write-Host "  [X]  Cloudflare RECHAZA la conexion: el token no es el actual." -ForegroundColor Red
+        Write-Host "       Recarga la pagina de Cloudflare con F5, vuelve a copiar el comando y ejecuta otra vez CONECTAR_CLOUDFLARE.bat."
+    } else {
+        Aviso "No se pudo comprobar la conexion desde aqui. Pregunta a Claude si el tunel aparece conectado."
+    }
 }
 Read-Host "Pulsa Intro para cerrar"
