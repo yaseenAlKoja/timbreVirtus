@@ -314,6 +314,7 @@ footer span{opacity:.75}
       <div class="card">
         <h2>Versión y actualizaciones</h2>
         <div id="versionInfo" class="muted" style="font-size:14px;margin-bottom:12px">—</div>
+        <div id="versionUltima" style="font-size:14px;margin-bottom:8px"></div>
         <div id="versionNueva" style="font-size:14px;margin-bottom:12px"></div>
         <div class="row" style="margin-bottom:14px">
           <button id="btnBuscarAct"><svg class="ico"><use href="#i-download"/></svg>Buscar actualizaciones</button>
@@ -810,8 +811,11 @@ function pintarVersion(){
   $("#versionInfo").innerHTML = v.sha
     ? `Versión instalada: <b>${esc(v.sha.slice(0,7))}</b> · ${esc(v.mensaje || "")}<br>Publicada ${esc(fechaCorta(v.fecha_commit))} · instalada ${esc(fechaCorta(v.instalada))}`
     : "Versión instalada: <b>sin identificar</b> (instalada a mano). Pulsa «Buscar actualizaciones».";
-  if (act && act.estado === "error") $("#versionNueva").innerHTML = `<span class="pill off">La última actualización falló</span> <span class="muted">${esc(act.error || "")}</span>`;
-  else if (act && act.estado === "revertida") $("#versionNueva").innerHTML = `<span class="pill warn">La versión nueva no arrancó y se volvió a la anterior</span>`;
+  let ultima = "";
+  if (act && act.estado === "error") ultima = `<span class="pill off">La última actualización falló</span> <span class="muted">${esc(act.error || "")} · ${esc(fechaCorta(act.fecha))}</span>`;
+  else if (act && act.estado === "revertida") ultima = `<span class="pill warn">La última versión no arrancó y se volvió a la anterior</span> <span class="muted">${esc(fechaCorta(act.fecha))}</span>`;
+  else if (act && act.estado === "en_curso") ultima = `<span class="pill warn">Actualización en curso…</span>`;
+  $("#versionUltima").innerHTML = ultima;
   $("#swAutoAct").checked = cfg ? cfg.actualizar_automaticamente !== false : true;
 }
 $("#btnBuscarAct").onclick = async () => {
