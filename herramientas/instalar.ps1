@@ -109,7 +109,11 @@ Write-Host ""
 Write-Host "Acceso desde fuera del colegio (timbre.virtuscollege.com) con Cloudflare Tunnel:"
 Write-Host "pega el token del tunel (Cloudflare Zero Trust > Networks > Tunnels). Vacio = no configurar / dejar como esta."
 $TokenTunel = (Read-Host "Token de Cloudflare Tunnel").Trim()
-if ($TokenTunel) { $TokenTunel = ($TokenTunel -split "\s+")[-1] }  # admite pegar el comando completo
+if ($TokenTunel) {
+    # admite pegar el comando completo (incluso dos veces): se queda con el primer token
+    $mTok = [regex]::Match($TokenTunel, "eyJ[A-Za-z0-9+/_-]{40,}={0,2}")
+    if ($mTok.Success) { $TokenTunel = $mTok.Value } else { Aviso "No parece un token de Cloudflare; se omite el tunel"; $TokenTunel = "" }
+}
 
 New-Item -ItemType Directory -Force -Path "$Instal\datos" | Out-Null
 try { Start-Transcript -Path "$Instal\datos\instalacion.log" -Append | Out-Null } catch {}
@@ -380,6 +384,10 @@ if ($TokenTunel) {
         New-Item -ItemType Directory -Force -Path $cfDir | Out-Null
         $cfExe = "$cfDir\cloudflared.exe"
         $arqCf = if ($env:PROCESSOR_ARCHITECTURE -eq "x86") { "386" } else { "amd64" }
+        if (Test-Path $cfExe) {
+            $v = Start-Process -FilePath $cfExe -ArgumentList "--version" -Wait -PassThru -WindowStyle Hidden
+            if ($v.ExitCode -ne 0) { Remove-Item $cfExe -Force }   # archivo dañado: se vuelve a descargar
+        }
         if (-not (Test-Path $cfExe)) {
             Write-Host "  Descargando cloudflared (programa oficial de Cloudflare)..."
             Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-$arqCf.exe" `

@@ -60,6 +60,11 @@ Sin protección, cualquiera en Internet podría hacer sonar el timbre del colegi
 Recomendado además: poner una **contraseña del panel** al ejecutar el instalador (segunda capa de seguridad).
 
 ### 3. Conectar el PC del colegio
+
+> Si el túnel falla o hay que cambiar el token, haz doble clic en **`CONECTAR_CLOUDFLARE.bat`**:
+> limpia lo anterior, descarga cloudflared nuevo y lo conecta (solo pide pegar el comando de Cloudflare).
+> No pegues el token en la ventana negra de Windows ni lo compartas en fotos o chats.
+
 Ejecuta `INSTALAR.bat` (o vuelve a ejecutarlo) y **pega el token** cuando lo pida.
 El instalador descarga `cloudflared` (programa oficial de Cloudflare) y lo deja como **servicio de Windows**:
 arranca solo con el PC, incluso antes de iniciar sesión. En Cloudflare → Tunnels el túnel debe aparecer **HEALTHY**.
