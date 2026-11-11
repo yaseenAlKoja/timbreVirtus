@@ -126,6 +126,9 @@ No uses ese PC para otras tareas: cualquier vídeo o aviso de otro programa tamb
   escúchalo y pulsa **Enviar a los altavoces**: suena el tono de aviso y después tu mensaje (1, 2 o 3 veces).
   El micrófono solo funciona entrando por **https://timbre.virtuscollege.com** o desde el propio PC (`localhost`);
   en el registro queda quién envió cada aviso. Se guardan los 30 últimos en `datos\megafonia\`.
+- **Idioma y tema:** arriba a la derecha, **EN/ES** cambia el panel entre español e inglés y el botón
+  ☾/☀ alterna tema automático (según el dispositivo), claro u oscuro. Se recuerda en cada dispositivo.
+  Los nombres de toques y horarios que escribas no se traducen.
 - **Registro:** historial de toques y avisos; copia de seguridad (exportar e importar).
 - **Nubi**, la mascota: flota en una esquina y se puede arrastrar a cualquier sitio (recuerda dónde la dejas). Púlsala para ver el próximo toque; cuando suena el timbre se pone a saltar. Se oculta desde su bocadillo y se recupera con «Mostrar a Nubi» en el pie de página.
 

@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Timbre · Virtus College</title>
 <link rel="icon" type="image/png" href="/marca/favicon.png">
+<script>
+  try {
+    var tema = localStorage.getItem("timbre-tema");
+    if (tema === "light" || tema === "dark") document.documentElement.dataset.theme = tema;
+    var idioma = localStorage.getItem("timbre-idioma") || ((navigator.language || "es").toLowerCase().indexOf("en") === 0 ? "en" : "es");
+    document.documentElement.lang = idioma;
+  } catch (e) {}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -17,27 +25,38 @@
   --bg:var(--vc-grey-light);--panel:#fff;--text:var(--vc-ink);--muted:var(--vc-muted);--line:var(--vc-grey-med);
   --accent:var(--vc-navy);--gold-tint:#F6F0E4;--gold-dark:#7A5C24;
   --ok:var(--vc-navy);--danger:#B42318;--danger-soft:#FCEBEA;
+  --fuerte:var(--vc-navy);--borde-fuerte:var(--vc-navy);--primario:var(--vc-navy);--campo:#fff;--pastilla:#EDEFF3;
+  --oro-suave:#F6F0E4;--oro-texto:#7A5C24;--hover:var(--vc-grey-light);--sombra-cab:rgba(31,28,61,.06);
+  color-scheme:light;
 }
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#100F21;--panel:#1A1834;--text:#DCDAE8;--muted:#A3A2B8;--line:#2E2B52;
+  --fuerte:#F3F1FB;--borde-fuerte:#9A96C8;--primario:#463F8F;--campo:#13112A;--pastilla:rgba(255,255,255,.08);
+  --oro-suave:rgba(190,153,87,.16);--oro-texto:#DCB156;--hover:rgba(255,255,255,.06);--sombra-cab:rgba(0,0,0,.35);
+  --danger:#FF8A7A;--danger-soft:rgba(180,35,24,.22);color-scheme:dark;}}
+:root[data-theme="dark"]{--bg:#100F21;--panel:#1A1834;--text:#DCDAE8;--muted:#A3A2B8;--line:#2E2B52;
+  --fuerte:#F3F1FB;--borde-fuerte:#9A96C8;--primario:#463F8F;--campo:#13112A;--pastilla:rgba(255,255,255,.08);
+  --oro-suave:rgba(190,153,87,.16);--oro-texto:#DCB156;--hover:rgba(255,255,255,.06);--sombra-cab:rgba(0,0,0,.35);
+  --danger:#FF8A7A;--danger-soft:rgba(180,35,24,.22);color-scheme:dark;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 var(--vc-font);-webkit-font-smoothing:antialiased}
 .ico{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;box-shadow:0 4px 18px rgba(31,28,61,.06)}
+header{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;box-shadow:0 4px 18px var(--sombra-cab)}
 .wrap{max-width:1200px;margin:0 auto;padding:0 24px}
 .top{display:flex;align-items:center;gap:20px;padding:14px 0 10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:18px;min-height:48px}
 .brand img{height:48px;width:auto;display:block}
-.brand .wordmark{display:none;line-height:1.05;color:var(--vc-navy)}
+.brand .wordmark{display:none;line-height:1.05;color:var(--fuerte)}
 .brand .wordmark b{display:block;font-size:19px;font-weight:800;letter-spacing:1.5px}
 .brand .wordmark small{font-size:11px;letter-spacing:1px;color:var(--vc-muted)}
 .brand.sin-logo img{display:none}.brand.sin-logo .wordmark{display:block}
 .brand .app{border-left:2px solid var(--vc-gold);padding-left:16px;line-height:1.2}
-.brand .app b{display:block;color:var(--vc-navy);font-size:17px;font-weight:700}
+.brand .app b{display:block;color:var(--fuerte);font-size:17px;font-weight:700}
 .brand .app span{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--vc-gold);font-weight:700}
-.clock{font-variant-numeric:tabular-nums;font-size:26px;font-weight:700;margin-left:auto;color:var(--vc-navy);text-align:right;line-height:1.15}
+.clock{font-variant-numeric:tabular-nums;font-size:26px;font-weight:700;margin-left:auto;color:var(--fuerte);text-align:right;line-height:1.15}
 .clock small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .clock .pill{margin-top:4px}
 nav{display:flex;gap:6px;overflow-x:auto}
-nav button{border:0;background:none;padding:10px 14px;color:var(--vc-navy);opacity:.7;font:500 15px var(--vc-font);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;border-radius:0}
+nav button{border:0;background:none;padding:10px 14px;color:var(--fuerte);opacity:.7;font:500 15px var(--vc-font);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;border-radius:0}
 nav button:hover{opacity:1;border-color:var(--vc-grey-med)}
 nav button.on{opacity:1;border-color:var(--vc-gold);font-weight:700}
 main{padding:28px 0 40px}
@@ -48,15 +67,15 @@ html{scroll-padding-top:180px}
 .muted{color:var(--muted)}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:700;letter-spacing:.3px}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.pill.ok{background:#EDEFF3;color:var(--vc-navy)}
+.pill.ok{background:var(--pastilla);color:var(--fuerte)}
 .pill.ok::before{background:var(--vc-gold)}
 .pill.off{background:var(--danger-soft);color:var(--danger)}
-.pill.warn{background:var(--gold-tint);color:var(--gold-dark)}
-.pill.info{background:#EDEFF3;color:var(--vc-navy)}
+.pill.warn{background:var(--oro-suave);color:var(--oro-texto)}
+.pill.info{background:var(--pastilla);color:var(--fuerte)}
 .pill.info::before{display:none}
-button,.btn{font:500 14px var(--vc-font);border:1.5px solid var(--line);background:#fff;color:var(--vc-navy);padding:8px 16px;border-radius:var(--vc-radius);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;line-height:1.4}
-button:hover,.btn:hover{border-color:var(--vc-navy)}
-button.primary,.btn.primary{background:var(--vc-navy);border-color:var(--vc-navy);color:#fff;font-weight:700}
+button,.btn{font:500 14px var(--vc-font);border:1.5px solid var(--line);background:var(--panel);color:var(--fuerte);padding:8px 16px;border-radius:var(--vc-radius);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;line-height:1.4}
+button:hover,.btn:hover{border-color:var(--fuerte)}
+button.primary,.btn.primary{background:var(--vc-navy);border-color:var(--fuerte);color:#fff;font-weight:700}
 button.gold,.btn.gold{background:var(--vc-gold);border-color:var(--vc-gold);color:var(--vc-navy);font-weight:700}
 button.primary:hover,button.gold:hover,.btn.gold:hover{opacity:.92}
 button.danger{color:var(--danger)}
@@ -65,21 +84,21 @@ button.ring{font-size:17px;padding:14px 26px;background:var(--vc-gold);border-co
 button.ring .ico{width:22px;height:22px}
 button.icon{padding:7px 9px}
 button:disabled{opacity:.45;cursor:default}
-input,select{font:15px var(--vc-font);color:var(--vc-navy);background:#fff;border:1.5px solid var(--line);border-radius:var(--vc-radius);padding:7px 10px}
+input,select{font:15px var(--vc-font);color:var(--fuerte);background:var(--campo);border:1.5px solid var(--line);border-radius:var(--vc-radius);padding:7px 10px}
 input:focus,select:focus,button:focus-visible{outline:2px solid var(--vc-gold);outline-offset:1px}
 input[type=time]{width:128px}
 input[type=number]{width:66px}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .spacer{flex:1}
 table{width:100%;border-collapse:collapse}
-th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--vc-navy);font-weight:700;padding:10px 6px;border-bottom:2px solid var(--vc-gold)}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--fuerte);font-weight:700;padding:10px 6px;border-bottom:2px solid var(--vc-gold)}
 td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
 tr.off td{opacity:.45}
 .days{display:flex;gap:4px}
 .days label{position:relative}
 .days input{position:absolute;opacity:0;pointer-events:none}
 .days span{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:var(--vc-radius);border:1.5px solid var(--line);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);user-select:none}
-.days input:checked+span{background:var(--vc-navy);border-color:var(--vc-navy);color:#fff}
+.days input:checked+span{background:var(--vc-navy);border-color:var(--fuerte);color:#fff}
 .days input:focus-visible+span{outline:2px solid var(--vc-gold);outline-offset:1px}
 /* Titular con cajas doradas (recurso distintivo de la marca) */
 /* Cabecera «Próximo toque»: franja marino con titular en cajas doradas y anillo de cuenta atrás */
@@ -109,23 +128,23 @@ tr.off td{opacity:.45}
 @media (max-width:760px){.hero{grid-template-columns:1fr;padding:26px 22px}.anillo{width:190px;height:190px;margin:0 auto}.big{font-size:26px}}
 .timeline{list-style:none;margin:0;padding:0}
 .timeline li{position:relative;display:flex;gap:14px;padding:10px 10px 10px 34px;align-items:center;border-radius:var(--vc-radius)}
-.timeline li::before{content:"";position:absolute;left:11px;top:50%;width:11px;height:11px;margin-top:-6px;border-radius:50%;border:2px solid var(--vc-navy);background:#fff;z-index:1}
+.timeline li::before{content:"";position:absolute;left:11px;top:50%;width:11px;height:11px;margin-top:-6px;border-radius:50%;border:2px solid var(--borde-fuerte);background:var(--panel);z-index:1}
 .timeline li::after{content:"";position:absolute;left:16px;top:0;bottom:0;width:2px;background:var(--line)}
 .timeline li:first-child::after{top:50%}
 .timeline li:last-child::after{bottom:50%}
-.timeline li.past::before{background:var(--vc-grey-med);border-color:var(--vc-grey-med)}
+.timeline li.past::before{background:var(--line);border-color:var(--line)}
 .timeline li.next::before{background:var(--vc-gold);border-color:var(--vc-gold);box-shadow:0 0 0 0 rgba(190,153,87,.6);animation:latidoOro 1.8s infinite}
 @keyframes latidoOro{0%{box-shadow:0 0 0 0 rgba(190,153,87,.55)}70%{box-shadow:0 0 0 9px rgba(190,153,87,0)}100%{box-shadow:0 0 0 0 rgba(190,153,87,0)}}
-.timeline .t{font-variant-numeric:tabular-nums;font-weight:700;width:52px;color:var(--vc-navy)}
+.timeline .t{font-variant-numeric:tabular-nums;font-weight:700;width:52px;color:var(--fuerte)}
 .timeline li.past{color:var(--muted)}
 .timeline li.past .t{color:var(--muted);text-decoration:line-through}
-.timeline li.next{background:var(--gold-tint);font-weight:700;color:var(--vc-navy)}
+.timeline li.next{background:var(--oro-suave);font-weight:700;color:var(--fuerte)}
 .log{font-size:13px;max-height:440px;overflow:auto}
 .log div{padding:6px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
 .log time{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 .log .error{color:var(--danger)}
-.log .aviso{color:var(--gold-dark)}
-.savebar{background:var(--gold-tint);border-top:2px solid var(--vc-gold);padding:8px 0;display:none;color:var(--vc-navy)}
+.log .aviso{color:var(--oro-texto)}
+.savebar{background:var(--oro-suave);border-top:2px solid var(--vc-gold);padding:8px 0;display:none;color:var(--fuerte)}
 .savebar.show{display:block}
 .toast{position:fixed;right:16px;bottom:16px;background:var(--vc-navy);color:#fff;padding:12px 18px;border-radius:var(--vc-radius);border-left:4px solid var(--vc-gold-on-navy);opacity:0;transition:opacity .2s;z-index:20;max-width:420px;font-weight:500;pointer-events:none}
 .toast.show{opacity:1}
@@ -133,7 +152,7 @@ tr.off td{opacity:.45}
 .hidden{display:none!important}
 .table-scroll{overflow-x:auto}
 .empty{padding:28px;text-align:center;color:var(--muted)}
-.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;color:var(--vc-navy)}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;color:var(--fuerte)}
 .switch input{width:42px;height:24px;appearance:none;background:var(--vc-grey-med);border-radius:99px;position:relative;cursor:pointer;border:0;padding:0;transition:background .15s}
 .switch input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .switch input:checked{background:var(--vc-gold)}
@@ -144,22 +163,22 @@ footer b{color:var(--vc-gold-on-navy);letter-spacing:1.5px;font-weight:700}
 footer span{opacity:.75}
 /* Ventana de megafonía */
 .modal{position:fixed;inset:0;z-index:50;background:rgba(7,26,37,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px}
-.modal-caja{position:relative;background:#fff;border-radius:10px;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;padding:28px 28px 22px;border-top:5px solid var(--vc-gold);box-shadow:0 24px 60px rgba(7,26,37,.35)}
-.modal-titulo{margin:0 0 6px;font-size:22px;font-weight:800;color:var(--vc-navy);line-height:1.25}
+.modal-caja{position:relative;background:var(--panel);border-radius:10px;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;padding:28px 28px 22px;border-top:5px solid var(--vc-gold);box-shadow:0 24px 60px rgba(7,26,37,.35)}
+.modal-titulo{margin:0 0 6px;font-size:22px;font-weight:800;color:var(--fuerte);line-height:1.25}
 .modal-cerrar{position:absolute;right:12px;top:12px;width:36px;height:36px;padding:0;justify-content:center;border:0;font-size:22px;color:var(--muted);background:transparent}
-.modal-cerrar:hover{background:var(--vc-grey-light)}
+.modal-cerrar:hover{background:var(--hover)}
 .mega-centro{display:flex;flex-direction:column;align-items:center;gap:12px;margin:22px 0 8px}
 .mic{width:118px;height:118px;border-radius:50%;border:0;padding:0;justify-content:center;background:var(--vc-gold);color:var(--vc-navy);box-shadow:0 10px 24px rgba(190,153,87,.4);transition:transform .15s}
 .mic:hover{transform:scale(1.04)}
 .mic .ico{width:46px;height:46px;stroke-width:1.8}
 .mic.grabando{background:#B42318;color:#fff;animation:latidoRojo 1.3s infinite}
 @keyframes latidoRojo{0%{box-shadow:0 0 0 0 rgba(180,35,24,.45)}70%{box-shadow:0 0 0 24px rgba(180,35,24,0)}100%{box-shadow:0 0 0 0 rgba(180,35,24,0)}}
-.mega-estado{font-weight:600;color:var(--vc-navy);text-align:center}
+.mega-estado{font-weight:600;color:var(--fuerte);text-align:center}
 .mega-tiempo{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
 #megaNivel{width:240px;height:34px}
 .mega-revisar{border-top:1px solid var(--line);margin-top:14px;padding-top:16px;display:flex;flex-direction:column;gap:12px}
 .mega-revisar audio{width:100%}
-.mega-opciones{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--vc-navy)}
+.mega-opciones{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--fuerte)}
 @media (max-width:520px){.timeline li .muted{display:none}}
 .mega-botones{display:grid;grid-template-columns:1fr 1.45fr;gap:10px}
 .mega-botones button{justify-content:center;padding:10px 12px}
@@ -204,6 +223,31 @@ footer span{opacity:.75}
   .clock{margin-left:0;width:100%;text-align:left;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
   .hero{padding:22px}.hero-count{text-align:left}
 }
+
+/* Modo oscuro: detalles */
+.brand .logo-oscuro{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .brand .logo-claro{display:none}
+  :root:not([data-theme="light"]) .brand .logo-oscuro{display:block}
+  :root:not([data-theme="light"]) .brand.sin-logo-oscuro .logo-oscuro{display:none}
+  :root:not([data-theme="light"]) .brand.sin-logo-oscuro .wordmark{display:block}
+  :root:not([data-theme="light"]) .hero,:root:not([data-theme="light"]) footer,:root:not([data-theme="light"]) .toast{box-shadow:0 0 0 1px rgba(255,255,255,.07),0 12px 32px rgba(0,0,0,.4)}
+  :root:not([data-theme="light"]) footer{background:var(--vc-navy-deep)}
+  :root:not([data-theme="light"]) .nubi svg{filter:drop-shadow(0 0 12px rgba(220,177,86,.28)) drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+  :root:not([data-theme="light"]) .card{box-shadow:none}
+}
+:root[data-theme="dark"] .brand .logo-claro{display:none}
+:root[data-theme="dark"] .brand .logo-oscuro{display:block}
+:root[data-theme="dark"] .brand.sin-logo-oscuro .logo-oscuro{display:none}
+:root[data-theme="dark"] .brand.sin-logo-oscuro .wordmark{display:block}
+:root[data-theme="dark"] .hero,:root[data-theme="dark"] footer,:root[data-theme="dark"] .toast{box-shadow:0 0 0 1px rgba(255,255,255,.07),0 12px 32px rgba(0,0,0,.4)}
+:root[data-theme="dark"] footer{background:var(--vc-navy-deep)}
+:root[data-theme="dark"] .nubi svg{filter:drop-shadow(0 0 12px rgba(220,177,86,.28)) drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+:root[data-theme="dark"] .card{box-shadow:none}
+/* Botones de idioma y tema */
+.preferencias{display:inline-flex;gap:6px;align-items:center;margin-left:8px;vertical-align:middle}
+.preferencias button{padding:3px 9px;font-size:12px;font-weight:700;letter-spacing:.5px;border-radius:99px;line-height:1.4}
+.preferencias button .ico{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -219,6 +263,9 @@ footer span{opacity:.75}
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4M8 22h8"/></symbol>
+  <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-luna" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></symbol>
   <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5M12 3v12"/></symbol>
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></symbol>
 </svg>
@@ -226,12 +273,14 @@ footer span{opacity:.75}
   <div class="wrap">
     <div class="top">
       <div class="brand" id="brand">
-        <img src="/marca/logo-positivo.svg" alt="Virtus College — The British Sixth Form"
+        <img class="logo-claro" src="/marca/logo-positivo.svg" alt="Virtus College — The British Sixth Form"
              onerror="document.getElementById('brand').classList.add('sin-logo')">
+        <img class="logo-oscuro" src="/marca/logo-negativo.png" alt="Virtus College — The British Sixth Form"
+             onerror="document.getElementById('brand').classList.add('sin-logo-oscuro')">
         <div class="wordmark"><b>VIRTUS COLLEGE</b><small>The British Sixth Form</small></div>
         <div class="app"><span>Sistema de</span><b>Timbre escolar</b></div>
       </div>
-      <div class="clock"><span id="reloj">--:--:--</span><small id="fecha"></small><span id="estadoPill" class="pill ok">Activo</span></div>
+      <div class="clock"><span id="reloj">--:--:--</span><small id="fecha"></small><span id="estadoPill" class="pill ok">Activo</span><span class="preferencias"><button id="btnTema" aria-label="Tema"></button><button id="btnIdioma" aria-label="Idioma">EN</button></span></div>
     </div>
     <nav id="tabs">
       <button data-tab="inicio" class="on">Inicio</button>
@@ -257,7 +306,7 @@ footer span{opacity:.75}
     <div class="hero">
       <div class="hero-main">
         <div class="kicker">Próximo toque</div>
-        <h1 class="vc-hl"><span id="proxNombre">—</span><br><span class="alt" id="proxHora"></span></h1>
+        <h1 class="vc-hl"><span id="proxNombre" translate="no">—</span><br><span class="alt" id="proxHora"></span></h1>
         <div id="proxSig" class="hero-sub"></div>
         <div class="hero-acciones">
           <button class="gold" id="btnHeroTocar"><svg class="ico"><use href="#i-bell"/></svg>Tocar timbre</button>
@@ -471,8 +520,7 @@ footer span{opacity:.75}
 <div class="toast" id="toast"></div>
 
 <script>
-const DIAS = ["L","M","X","J","V","S","D"];
-const DIAS_LARGO = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
+
 let estado = null;        // último estado del servidor
 let cfg = null;           // copia editable de la configuración
 let sucio = false;
@@ -483,6 +531,216 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const uid = () => Math.random().toString(16).slice(2, 12);
 const pad = n => String(n).padStart(2, "0");
+/* ---------- Idioma (ES / EN) y tema (claro / oscuro) ---------- */
+const LANG = document.documentElement.lang === "en" ? "en" : "es";
+const LOC = LANG === "en" ? "en-GB" : "es-ES";
+const L = (es, en) => LANG === "en" ? en : es;
+const EN = {
+  "Inicio": "Home", "Horarios": "Schedules", "Días sin timbre": "No-bell days", "Sonidos": "Sounds", "Registro": "Log",
+  "Activo": "Active", "Sistema de": "School", "Timbre escolar": "Bell system", "Próximo toque": "Next bell", "Faltan": "Time left",
+  "Tocar timbre": "Ring bell", "Megafonía": "PA", "Tocar ahora": "Ring now", "Parar": "Stop", "Estado": "Status",
+  "Timbre automático activado": "Automatic bell on", "Timbre automático desactivado": "Automatic bell off",
+  "Horario activo:": "Active schedule:", "Toques de hoy": "Today's bells", "Horario:": "Schedule:",
+  "Usar este horario": "Use this schedule", "Nuevo": "New", "Duplicar": "Duplicate", "Renombrar": "Rename", "Eliminar": "Delete",
+  "Hora": "Time", "Nombre": "Name", "Días": "Days", "Sonido": "Sound", "Rep.": "Rep.", "Repeticiones": "Repetitions",
+  "Añadir toque": "Add bell", "Los toques se ordenan por hora al guardar.": "Bells are sorted by time when you save.",
+  "Festivos, vacaciones o días sin clase. Durante estas fechas no sonará ningún toque programado (el botón manual sigue funcionando).":
+    "Holidays, breaks or days without classes. No scheduled bell will ring on these dates (the manual button still works).",
+  "Desde": "From", "Hasta": "To", "Motivo": "Reason", "Añadir día o periodo": "Add day or period", "Subir sonido": "Upload sound",
+  "Puedes subir varios archivos a la vez (MP3, WAV, OGG, M4A…). Se convierten automáticamente a":
+    "You can upload several files at once (MP3, WAV, OGG, M4A…). They are converted automatically to",
+  ", se quita el silencio inicial para que suenen justo a la hora y se igualan de volumen. «Escuchar aquí» suena en este navegador; «Probar en altavoces» suena en la megafonía.":
+    ", leading silence is removed so they ring right on time, and volumes are evened out. “Listen here” plays in this browser; “Test on speakers” plays on the PA.",
+  "Archivo": "File", "Duración": "Duration", "Tamaño": "Size", "Escuchar aquí": "Listen here", "Probar en altavoces": "Test on speakers",
+  "incluido": "built-in", "Convertir a WAV": "Convert to WAV", "No hay sonidos": "No sounds",
+  "Actividad reciente": "Recent activity", "Versión y actualizaciones": "Version and updates",
+  "Buscar actualizaciones": "Check for updates", "Actualizar ahora": "Update now",
+  "Actualizar automáticamente por la noche (3:00)": "Update automatically at night (3:00)",
+  "Las actualizaciones se descargan de GitHub. Se hace copia de seguridad antes y, si la versión nueva no arranca, se vuelve sola a la anterior. Los horarios, festivos y sonidos nunca se tocan.":
+    "Updates are downloaded from GitHub. A backup is made first and, if the new version doesn't start, the previous one is restored automatically. Schedules, holidays and sounds are never touched.",
+  "Copia de seguridad": "Backup", "Descarga toda la configuración (horarios y días sin timbre) o restaura una copia anterior.":
+    "Download all settings (schedules and no-bell days) or restore a previous backup.",
+  "Exportar configuración": "Export settings", "Importar": "Import", "Hay cambios sin guardar": "You have unsaved changes",
+  "Descartar": "Discard", "Guardar cambios": "Save changes", "Mostrar a Nubi": "Show Nubi", "Ocultar a Nubi": "Hide Nubi",
+  "Habla por los altavoces del colegio": "Speak through the school speakers", "Pulsa el micrófono y habla": "Tap the microphone and speak",
+  "Máximo 60 segundos": "Up to 60 seconds", "Tono de aviso antes": "Chime first", "Repetir": "Repeat",
+  "1 vez": "once", "2 veces": "twice", "3 veces": "3 times", "Grabar otra vez": "Record again", "Enviar a los altavoces": "Send to speakers",
+  "Lo que grabes sonará en todo el colegio.": "What you record will play across the whole school.", "Cerrar": "Close",
+  "Empezar a grabar": "Start recording", "Terminar la grabación": "Stop recording",
+  "Grabando… pulsa otra vez para terminar": "Recording… tap again to stop", "Preparando el aviso…": "Preparing the announcement…",
+  "Escúchalo si quieres y envíalo": "Listen to it if you like, then send it",
+  "No se pudo usar el micrófono. Permite el acceso al micrófono en el navegador.": "Couldn't use the microphone. Allow microphone access in the browser.",
+  "no se ha oído nada; acércate al micrófono": "nothing was heard; move closer to the microphone", "el archivo está en silencio": "the file is silent",
+  "Nubi, la mascota del timbre. Pulsa para hablar por megafonía; arrástrala para moverla.": "Nubi, the bell mascot. Tap to speak over the PA; drag to move it.",
+  "The British Sixth Form · Sistema de timbre escolar": "The British Sixth Form · School bell system",
+  "No hay días sin timbre configurados": "No no-bell days set", "Este horario no tiene toques. Pulsa «Añadir toque».": "This schedule has no bells. Click “Add bell”.",
+  "Ej. Fin 1ª hora": "e.g. End of period 1", "Ej. Día del Pilar": "e.g. Bank holiday",
+  "Comprobando la hora…": "Checking the time…", "Hora correcta": "Clock correct", "No se pudo comprobar la hora": "Couldn't check the time",
+  "sin acceso a servidores de hora": "no access to time servers", "Timbre desactivado": "Bell off", "Hoy sin timbre": "No bells today",
+  "Sin conexión": "Offline", "Desactivado": "Off", "No hay toques programados": "No bells scheduled",
+  "El timbre automático está desactivado": "The automatic bell is off", "En uso": "In use", "No está en uso": "Not in use",
+  "Cambios guardados": "Changes saved", "Recuerda guardar para aplicar el cambio": "Remember to save to apply the change",
+  "Sonando en los altavoces": "Playing on the speakers", "Sonido eliminado": "Sound deleted", "Configuración importada": "Settings imported",
+  "Aviso enviado a los altavoces": "Announcement sent to the speakers", "Actualizado. Recargando…": "Updated. Reloading…",
+  "La actualización está tardando. Revisa el Registro en unos minutos.": "The update is taking a while. Check the Log in a few minutes.",
+  "No hay nada que actualizar": "Nothing to update", "Falta una fecha en «Días sin timbre»": "A date is missing in “No-bell days”",
+  "Versión instalada:": "Installed version:", "sin identificar": "unidentified",
+  "(instalada a mano). Pulsa «Buscar actualizaciones».": "(installed manually). Click “Check for updates”.",
+  "Hay una versión nueva": "A new version is available", "Tienes la última versión": "You're up to date", "Consultando GitHub…": "Checking GitHub…",
+  "Actualizando…": "Updating…", "el panel se recargará solo": "the panel will reload itself", "La última actualización falló": "The last update failed",
+  "La última versión no arrancó y se volvió a la anterior": "The latest version didn't start and the previous one was restored",
+  "Actualización en curso…": "Update in progress…", "Toque": "Bell", "Toque manual": "Manual ring", "Prueba de sonido": "Sound test",
+  "Prueba": "Test", "Aviso por megafonía": "PA announcement", "Horario especial": "Special schedule",
+  "¿Descartar los cambios?": "Discard the changes?", "Hay otros cambios sin guardar. ¿Guardarlos también?": "There are other unsaved changes. Save them too?",
+  "Nombre del nuevo horario:": "Name of the new schedule:", "Nombre de la copia:": "Name of the copy:", "Nuevo nombre:": "New name:",
+  "Se instalará la versión nueva y el timbre se reiniciará unos segundos. ¿Continuar?": "The new version will be installed and the bell will restart for a few seconds. Continue?",
+  "Se reemplazarán todos los horarios y días sin timbre actuales. ¿Continuar?": "All current schedules and no-bell days will be replaced. Continue?",
+  // mensajes del servidor
+  "Configuración guardada": "Settings saved", "Servicio iniciado": "Service started", "⏹ Reproducción detenida": "⏹ Playback stopped",
+  "✓ El reloj del PC vuelve a estar en hora": "✓ The PC clock is correct again", "Cerrando para instalar una actualización": "Closing to install an update",
+  "Actualización automática nocturna": "Automatic nightly update", "Ya tienes la última versión": "You're already up to date",
+  "Ya hay una actualización en curso": "An update is already in progress", "El aviso grabado no es un audio WAV válido": "The recording isn't a valid WAV file",
+  "El aviso dura más de 2 minutos": "The announcement is longer than 2 minutes", "No se pudo leer el aviso grabado": "Couldn't read the recording",
+  "Archivo demasiado grande": "File too large", "El archivo está vacío": "The file is empty", "No encontrado": "Not found",
+  "JSON no válido": "Invalid JSON", "Debe existir al menos un horario": "At least one schedule is required",
+  "Fecha no válida en días sin timbre (formato AAAA-MM-DD)": "Invalid date in no-bell days (YYYY-MM-DD format)",
+  "Configuración no válida": "Invalid settings", "Tema": "Theme", "Idioma": "Language",
+  "Hay cambios sin guardar. ¿Cambiar de idioma y perderlos?": "You have unsaved changes. Switch language and lose them?",
+  "Cargando…": "Loading…",
+};
+const fueOrigen = o => ({manual: "manual", prueba: "test", programado: "scheduled"}[o] || o);
+const PATRONES = [
+  [/^(.+) a las (\d\d:\d\d)$/, m => `${m[1] === "Hoy" ? "Today" : m[1]} at ${m[2]}`],
+  [/^Sonido: (.*)$/, m => `Sound: ${m[1]}`],
+  [/^Después: (.*)$/, m => `Then: ${m[1]}`],
+  [/^Sonando ahora: (.*)$/, m => `Now playing: ${tr(m[1])}`],
+  [/^desfase ([\d.,]+) s con (.+)$/, m => `${m[1]} s offset from ${m[2]}`],
+  [/^Reloj desajustado (\d+) s$/, m => `Clock off by ${m[1]} s`],
+  [/^(atrasado|adelantado) respecto a (.+)$/, m => `${m[1] === "atrasado" ? "behind" : "ahead of"} ${m[2]}`],
+  [/^Zona horaria: (.+?)( · comprobado (.+))?$/, m => `Time zone: ${m[1]}${m[2] ? " · checked " + m[3] : ""}`],
+  [/^Equipo: (.*)$/, m => `Computer: ${m[1]}`],
+  [/^Audio: (.*)$/, m => "Audio: " + m[1].replace("WAV nativo", "native WAV").replace("MP3 vía Windows Media", "MP3 via Windows Media")
+      .replace("resto con ffplay", "others via ffplay").replace("no disponible", "not available")
+      .replace("⚠ no se encontró reproductor (instala alsa-utils o ffmpeg)", "⚠ no audio player found (install alsa-utils or ffmpeg)")],
+  [/^No hay toques los (.+) en este horario\.$/, m => `No bells on ${m[1]}s in this schedule.`],
+  [/^(.*) ⚠ no existe$/, m => `${m[1]} ⚠ missing`],
+  [/^Aviso de ([\d.]+) s$/, m => `${m[1]} s announcement`],
+  [/^Publicada (.+) · instalada (.+)$/, m => `Released ${m[1]} · installed ${m[2]}`],
+  [/^Subido: (.+?) \(WAV, ([\d.]+) s(, quitados ([\d.]+) s de silencio inicial)?\)$/, m => `Uploaded: ${m[1]} (WAV, ${m[2]} s${m[3] ? `, ${m[4]} s of leading silence removed` : ""})`],
+  [/^Subido: (.+)$/, m => `Uploaded: ${m[1]}`],
+  [/^Convertido a (.+?) \(([\d.]+) s(, quitados ([\d.]+) s de silencio inicial)?\)( · (\d+) toque\(s\) actualizados)?$/,
+    m => `Converted to ${m[1]} (${m[2]} s${m[3] ? `, ${m[4]} s of leading silence removed` : ""})${m[5] ? ` · ${m[6]} bell(s) updated` : ""}`],
+  [/^Creado (.+)\. Guarda tus cambios y elige el nuevo sonido en los toques\.$/, m => `Created ${m[1]}. Save your changes and choose the new sound in the bells.`],
+  [/^No se pudo (convertir|importar|preparar el aviso): (.*)$/, m => `Couldn't ${{convertir: "convert", importar: "import", "preparar el aviso": "prepare the announcement"}[m[1]]}: ${tr(m[2])}`],
+  [/^Hora vacía o incorrecta en «(.+)»$/, m => `Empty or invalid time in “${m[1]}”`],
+  [/^El toque de las (\d\d:\d\d) \(«(.+)»\) no tiene ningún día marcado$/, m => `The ${m[1]} bell (“${m[2]}”) has no days selected`],
+  [/^¿Eliminar el toque de las (.+)\?$/, m => `Delete the ${m[1]} bell?`],
+  [/^¿Eliminar el horario «(.+)»\?$/, m => `Delete the schedule “${m[1]}”?`],
+  [/^¿Eliminar el sonido «(.+)»\?$/, m => `Delete the sound “${m[1]}”?`],
+  [/^Ya existe «(.+)»\. ¿Reemplazarlo\?$/, m => `“${m[1]}” already exists. Replace it?`],
+  [/^No se pudo convertir «(.+)» a WAV \((.*)\)\. ¿Subir el archivo original tal cual\?$/, m => `Couldn't convert “${m[1]}” to WAV (${tr(m[2])}). Upload the original file as it is?`],
+  [/^«(.+)» dura (\d+) s\. Un timbre suele durar pocos segundos\. ¿Subirlo igualmente\?$/, m => `“${m[1]}” lasts ${m[2]} s. A bell usually lasts a few seconds. Upload anyway?`],
+  [/^(.+) \(copia\)$/, m => `${m[1]} (copy)`],
+  [/^Prueba: (.+)$/, m => `Test: ${m[1]}`],
+  // registro del servidor
+  [/^🔔 (.+?) — (.+?)( ×\d+)?( \((\w+)\))?$/, m => `🔔 ${tr(m[1])} — ${m[2]}${m[3] || ""}${m[4] ? ` (${fueOrigen(m[5])})` : ""}`],
+  [/^📢 Aviso por megafonía \((\d+) s(, ×\d+)?\)( — .+)?$/, m => `📢 PA announcement (${m[1]} s${m[2] || ""})${m[3] || ""}`],
+  [/^Sonido subido: (.+)$/, m => `Sound uploaded: ${m[1]}`], [/^Sonido eliminado: (.+)$/, m => `Sound deleted: ${m[1]}`],
+  [/^No se encuentra el sonido «(.+)» \((.+)\)$/, m => `Sound “${m[1]}” not found (${tr(m[2])})`],
+  [/^Error al reproducir (.+?): (.+)$/, m => `Error playing ${m[1]}: ${m[2]}`],
+  [/^Cambio de hora del sistema detectado \((.+) s\); no se tocan los toques intermedios$/, m => `System clock change detected (${m[1]} s); bells in between are skipped`],
+  [/^⚠ El reloj del PC va (\d+) s (atrasado|adelantado) respecto a (.+)\. Intentando resincronizar…$/,
+    m => `⚠ The PC clock is ${m[1]} s ${m[2] === "atrasado" ? "behind" : "ahead of"} ${m[3]}. Resyncing…`],
+  [/^Buscando e instalando la versión (\w+)…$/, m => `Downloading and installing version ${m[1]}…`],
+  [/^⬇ Actualización a la versión (\w+) iniciada$/, m => `⬇ Update to version ${m[1]} started`],
+  [/^Versión (\w+) descargada y comprobada$/, m => `Version ${m[1]} downloaded and checked`],
+  [/^✓ Actualizado a la versión (\w+)(: .*)?$/, m => `✓ Updated to version ${m[1]}${m[2] || ""}`],
+  [/^La versión (\w+) no responde: volviendo a la anterior$/, m => `Version ${m[1]} isn't responding: rolling back`],
+  [/^↩ Restaurada la versión anterior( \(no responde: revisa el PC\))?$/, m => `↩ Previous version restored${m[1] ? " (not responding: check the PC)" : ""}`],
+  [/^No se pudo actualizar a (\w+): (.+)$/, m => `Couldn't update to ${m[1]}: ${m[2]}`],
+  [/^No se pudo consultar GitHub: (.+)$/, m => `Couldn't reach GitHub: ${m[1]}`],
+  [/^Comprobación de actualizaciones: (.+)$/, m => `Update check: ${m[1]}`],
+  [/^Error en el planificador: (.+)$/, m => `Scheduler error: ${m[1]}`],
+  [/^Hora no válida «(.+)» en «(.+)» \(formato HH:MM\)$/, m => `Invalid time “${m[1]}” in “${m[2]}” (HH:MM format)`],
+  [/^Nombre de archivo no válido \(formatos: (.+)\)$/, m => `Invalid file name (formats: ${m[1]})`],
+  [/^El sonido está en uso: (.+)$/, m => `The sound is in use: ${m[1]}`],
+  [/^Fecha inexistente: (.+)$/, m => `Non-existent date: ${m[1]}`],
+  [/^Error interno: (.+)$/, m => `Internal error: ${m[1]}`],
+];
+function tr(texto){
+  if (LANG !== "en" || texto == null) return texto;
+  const t = String(texto).trim();
+  if (!t) return texto;
+  let r = EN[t];
+  if (r === undefined){
+    for (const [re, fn] of PATRONES){ const m = t.match(re); if (m){ r = fn(m); break; } }
+  }
+  return r === undefined ? texto : String(texto).replace(t, r);
+}
+// Traduce lo que aparece en pantalla (textos fijos, generados y mensajes del servidor)
+function traducirNodo(raiz){
+  if (LANG !== "en" || !raiz) return;
+  const textos = n => {
+    if (n.parentElement && n.parentElement.closest("[translate=no],script,style,textarea")) return;
+    const v = n.nodeValue, r = tr(v);
+    if (r !== v) n.nodeValue = r;
+  };
+  const atributos = el => {
+    if (el.closest && el.closest("[translate=no]")) return;
+    for (const a of ["placeholder", "aria-label", "title"]){
+      const v = el.getAttribute && el.getAttribute(a);
+      if (v){ const r = tr(v); if (r !== v) el.setAttribute(a, r); }
+    }
+  };
+  if (raiz.nodeType === 3){ textos(raiz); return; }
+  if (raiz.nodeType !== 1) return;
+  atributos(raiz);
+  const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  while (w.nextNode()){ const n = w.currentNode; n.nodeType === 3 ? textos(n) : atributos(n); }
+}
+if (LANG === "en"){
+  traducirNodo(document.body);
+  new MutationObserver(cambios => {
+    for (const c of cambios){
+      if (c.type === "childList") c.addedNodes.forEach(traducirNodo);
+      else if (c.type === "characterData") traducirNodo(c.target);
+      else if (c.type === "attributes") traducirNodo(c.target);
+    }
+  }).observe(document.body, {childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["placeholder", "aria-label", "title"]});
+  const confirmar = window.confirm.bind(window), preguntar = window.prompt.bind(window);
+  window.confirm = m => confirmar(tr(m));
+  window.prompt = (m, d) => preguntar(tr(m), d === undefined ? d : tr(d));
+  document.title = "Bell · Virtus College";
+}
+// Botones de idioma y tema
+$("#btnIdioma").textContent = LANG === "en" ? "ES" : "EN";
+$("#btnIdioma").title = LANG === "en" ? "Ver en español" : "View in English";
+$("#btnIdioma").onclick = () => {
+  if (sucio && !confirm("Hay cambios sin guardar. ¿Cambiar de idioma y perderlos?")) return;
+  sucio = false;
+  try { localStorage.setItem("timbre-idioma", LANG === "en" ? "es" : "en"); } catch(e){}
+  location.reload();
+};
+const TEMAS = ["auto", "light", "dark"];
+function pintarTema(){
+  const tema = document.documentElement.dataset.theme || "auto";
+  const b = $("#btnTema");
+  b.innerHTML = `<svg class="ico"><use href="#i-${{auto: "auto", light: "sol", dark: "luna"}[tema]}"/></svg>`;
+  b.title = L({auto: "Tema: automático", light: "Tema: claro", dark: "Tema: oscuro"}[tema], {auto: "Theme: automatic", light: "Theme: light", dark: "Theme: dark"}[tema]);
+  b.setAttribute("aria-label", b.title);
+}
+$("#btnTema").onclick = () => {
+  const actual = document.documentElement.dataset.theme || "auto";
+  const sig = TEMAS[(TEMAS.indexOf(actual) + 1) % TEMAS.length];
+  if (sig === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = sig;
+  try { sig === "auto" ? localStorage.removeItem("timbre-tema") : localStorage.setItem("timbre-tema", sig); } catch(e){}
+  pintarTema();
+};
+pintarTema();
+
+const DIAS = L(["L","M","X","J","V","S","D"], ["M","T","W","T","F","S","S"]);
+const DIAS_LARGO = L(["lunes","martes","miércoles","jueves","viernes","sábado","domingo"], ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]);
+
 
 function toast(msg, err=false){
   const t = $("#toast"); t.textContent = msg; t.className = "toast show" + (err ? " err" : "");
@@ -545,7 +803,7 @@ function momentoAnterior(a){
 function tick(){
   const a = ahoraServidor();
   $("#reloj").textContent = `${pad(a.getHours())}:${pad(a.getMinutes())}:${pad(a.getSeconds())}`;
-  const f = a.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+  const f = a.toLocaleDateString(LOC, {weekday:"long", day:"numeric", month:"long", year:"numeric"});
   $("#fecha").textContent = f.charAt(0).toUpperCase() + f.slice(1);
   if (estado?.proximos?.length){
     const p = estado.proximos[0];
@@ -575,10 +833,10 @@ function pintarEstado(){
     const d = new Date(p.momento);
     const hoy = ahoraServidor().toDateString() === d.toDateString();
     $("#proxNombre").textContent = p.nombre || "Toque";
-    $("#proxHora").textContent = (hoy ? "Hoy" : d.toLocaleDateString("es-ES", {weekday:"long", day:"numeric", month:"short"})) + " a las " + p.hora;
+    $("#proxHora").textContent = (hoy ? "Hoy" : d.toLocaleDateString(LOC, {weekday:"long", day:"numeric", month:"short"})) + " a las " + p.hora;
     $("#proxSig").innerHTML = `Sonido: ${esc(p.sonido)}${p.repeticiones>1?" ×"+p.repeticiones:""}<br>` + estado.proximos.slice(1).map(x => {
       const dx = new Date(x.momento);
-      return `Después: ${esc(x.hora)} ${esc(x.nombre)}` + (dx.toDateString() !== d.toDateString() ? ` (${dx.toLocaleDateString("es-ES",{weekday:"short"})})` : "");
+      return `Después: ${esc(x.hora)} ${esc(x.nombre)}` + (dx.toDateString() !== d.toDateString() ? ` (${dx.toLocaleDateString(LOC,{weekday:"short"})})` : "");
     }).join("<br>");
   } else {
     $("#proxNombre").textContent = c.activo ? "No hay toques programados" : "El timbre automático está desactivado";
@@ -592,7 +850,7 @@ function pintarEstado(){
   else if (h.ok === true) txtHora = `<span class="pill ok">Hora correcta</span> <span class="muted">desfase ${Math.abs(h.desfase).toFixed(1)} s con ${esc(h.servidor)}</span>`;
   else if (h.ok === false) txtHora = `<span class="pill off">Reloj desajustado ${Math.abs(h.desfase).toFixed(0)} s</span> <span class="muted">${h.desfase > 0 ? "atrasado" : "adelantado"} respecto a ${esc(h.servidor)}</span>`;
   else txtHora = `<span class="pill warn">No se pudo comprobar la hora</span> <span class="muted">sin acceso a servidores de hora</span>`;
-  eh.innerHTML = txtHora + `<div class="muted" style="margin-top:4px">Zona horaria: ${esc(estado.zona_horaria)}${h ? " · comprobado " + new Date(h.comprobado).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"}) : ""}</div>`;
+  eh.innerHTML = txtHora + `<div class="muted" style="margin-top:4px">Zona horaria: ${esc(estado.zona_horaria)}${h ? " · comprobado " + new Date(h.comprobado).toLocaleTimeString(LOC,{hour:"2-digit",minute:"2-digit"}) : ""}</div>`;
 
   nubiSonando(estado.sonando);
   $("#sonando").textContent = estado.sonando ? `Sonando ahora: ${estado.sonando}` : "";
@@ -617,7 +875,7 @@ function pintarEstado(){
       let cls = "";
       if (t.hora <= hm) cls = "past";
       else if (!marcado){ cls = "next"; marcado = true; }
-      return `<li class="${cls}"><span class="t">${esc(t.hora)}</span><span>${esc(t.nombre || "Toque")}</span><span class="spacer"></span><span class="muted" style="font-size:13px">${esc(t.sonido)}${t.repeticiones>1?" ×"+t.repeticiones:""}</span></li>`;
+      return `<li class="${cls}"><span class="t">${esc(t.hora)}</span><span translate="no">${esc(t.nombre || tr("Toque"))}</span><span class="spacer"></span><span class="muted" style="font-size:13px">${esc(t.sonido)}${t.repeticiones>1?" ×"+t.repeticiones:""}</span></li>`;
     }).join("");
   }
 
@@ -639,7 +897,7 @@ function pintarEstado(){
   // registro
   $("#registro").innerHTML = estado.registro.map(r => {
     const f = new Date(r.fecha);
-    return `<div class="${esc(r.tipo)}"><time>${f.toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit"})} ${f.toLocaleTimeString("es-ES")}</time><span>${esc(r.texto)}</span></div>`;
+    return `<div class="${esc(r.tipo)}"><time>${f.toLocaleDateString(LOC,{day:"2-digit",month:"2-digit"})} ${f.toLocaleTimeString(LOC)}</time><span>${esc(r.texto)}</span></div>`;
   }).join("") || '<div class="muted">Sin actividad todavía</div>';
 
   pintarVersion();
@@ -897,7 +1155,7 @@ $("#fileSonido").onchange = async e => {
 };
 
 /* ---------- versión y actualizaciones ---------- */
-const fechaCorta = iso => iso ? new Date(iso).toLocaleString("es-ES", {day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"}) : "";
+const fechaCorta = iso => iso ? new Date(iso).toLocaleString(LOC, {day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"}) : "";
 function pintarVersion(){
   const v = estado.version || {}, act = estado.actualizacion;
   $("#versionInfo").innerHTML = v.sha
@@ -981,19 +1239,20 @@ function decir(html, ms = 5000){
   if (ms) bocadilloTimer = setTimeout(() => bocadillo.classList.remove("ver"), ms);
 }
 function textoProximo(){
-  if (!estado) return "Cargando…";
-  if (!estado.config.activo) return "El timbre automático está <b>desactivado</b>.";
+  if (!estado) return L("Cargando…", "Loading…");
+  if (!estado.config.activo) return L("El timbre automático está <b>desactivado</b>.", "The automatic bell is <b>off</b>.");
   const p = estado.proximos[0];
-  if (!p) return "No hay toques programados.";
+  if (!p) return L("No hay toques programados.", "No bells scheduled.");
   const d = new Date(p.momento), ms = d - ahoraServidor();
   const min = Math.max(0, Math.round(ms / 60000));
-  const falta = min < 1 ? "menos de un minuto" : min < 60 ? `${min} min` : `${Math.floor(min/60)} h ${min%60} min`;
+  const falta = min < 1 ? L("menos de un minuto", "less than a minute") : min < 60 ? `${min} min` : `${Math.floor(min/60)} h ${min%60} min`;
   const hoy = d.toDateString() === ahoraServidor().toDateString();
-  return `Próximo toque: <b>${esc(p.nombre || "Toque")}</b><br>${hoy ? "hoy" : d.toLocaleDateString("es-ES",{weekday:"long"})} a las <b>${esc(p.hora)}</b> · faltan ${falta}`;
+  return L(`Próximo toque: <b>${esc(p.nombre || "Toque")}</b><br>${hoy ? "hoy" : d.toLocaleDateString(LOC,{weekday:"long"})} a las <b>${esc(p.hora)}</b> · faltan ${falta}`,
+           `Next bell: <b>${esc(p.nombre || "Bell")}</b><br>${hoy ? "today" : d.toLocaleDateString(LOC,{weekday:"long"})} at <b>${esc(p.hora)}</b> · ${falta} to go`);
 }
 function nubiSonando(sonando){
   nubi.classList.toggle("sonando", !!sonando || !!(typeof mega !== "undefined" && mega.grabadora));
-  if (sonando && sonando !== ultimoSonando) decir(`<b>¡Riiing!</b><br>${esc(sonando)}`, 6000);
+  if (sonando && sonando !== ultimoSonando) decir(`<b>${L("¡Riiing!", "Riiing!")}</b><br>${esc(tr(sonando))}`, 6000);
   ultimoSonando = sonando;
 }
 // Arrastrar (ratón y pantalla táctil)
@@ -1027,14 +1286,15 @@ $("#ocultarNubi2").onclick = () => {
 };
 $("#mostrarNubi").onclick = () => {
   nubi.classList.remove("hidden"); $("#mostrarNubi").classList.add("hidden"); guardarLocal("nubi-oculta", false);
-  colocarNubi(); decir("¡Hola de nuevo!", 2500);
+  colocarNubi(); decir(L("¡Hola de nuevo!", "Hello again!"), 2500);
 };
 if (leerLocal("nubi-oculta")){ nubi.classList.add("hidden"); $("#mostrarNubi").classList.remove("hidden"); }
 window.addEventListener("resize", colocarNubi);
 colocarNubi();
 if (!leerLocal("nubi-saludado")) setTimeout(() => {
   if (nubi.classList.contains("hidden") || bocadillo.classList.contains("ver")) return;
-  decir("¡Hola! Soy <b>Nubi</b>. Pulsa sobre mí para <b>hablar por megafonía</b>, o arrástrame donde quieras.", 7000);
+  decir(L("¡Hola! Soy <b>Nubi</b>. Pulsa sobre mí para <b>hablar por megafonía</b>, o arrástrame donde quieras.",
+          "Hi! I'm <b>Nubi</b>. Tap me to <b>speak over the PA</b>, or drag me anywhere."), 7000);
   guardarLocal("nubi-saludado", true);
 }, 1500);
 
@@ -1055,7 +1315,8 @@ function abrirMegafonia(){
   megaModal.classList.remove("hidden");
   $("#megaProx").innerHTML = textoProximo().replace("<br>", " · ");
   if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){
-    $("#megaEstado").innerHTML = "El micrófono solo funciona entrando por <b>https://timbre.virtuscollege.com</b> o desde el propio PC del timbre.";
+    $("#megaEstado").innerHTML = L("El micrófono solo funciona entrando por <b>https://timbre.virtuscollege.com</b> o desde el propio PC del timbre.",
+                                   "The microphone only works via <b>https://timbre.virtuscollege.com</b> or on the bell PC itself.");
     $("#megaMic").disabled = true;
   } else if (!mega.grabadora) megaPaso(mega.wav ? "revisar" : "inicio");
   setTimeout(() => $("#megaMic").focus(), 50);
@@ -1146,7 +1407,7 @@ $("#megaEnviar").onclick = async () => {
     mega.wav = null;
     cerrarMegafonia(); megaPaso("inicio");
     toast("Aviso enviado a los altavoces");
-    decir("<b>¡Atención, por favor!</b><br>Emitiendo tu aviso…", 5000);
+    decir(L("<b>¡Atención, por favor!</b><br>Emitiendo tu aviso…", "<b>Attention, please!</b><br>Playing your announcement…"), 5000);
     setTimeout(cargar, 400);
   } catch(e){ toast(e.message, true); }
   b.disabled = false;
